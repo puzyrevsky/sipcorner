@@ -1,0 +1,27 @@
+.sectionAddIngredientsContainer {
+    margin-bottom: 50px;
+}
+
+.sectionAddIngredientsListContainer {
+    margin: 20px 0;
+}
+
+.sectionAddIngredientsFormContainer {
+    display: flex;
+    flex-direction: column;
+    max-width: 450px;
+}
+
+.sectionAddIngredientsBlockIngredient {
+    position: relative;
+    display: inline-block;
+    padding: 10px 45px 10px 10px;
+    border-radius: 13px;
+    background-color: aliceblue;
+    box-shadow: 0px 0px 18px 1px rgba(146, 146, 146, 0.741);
+    margin: 13px 26px 13px 0px;
+
+    .sectionAddIngredientsBlockIngredientText {
+        margin: 0;
+    }
+}

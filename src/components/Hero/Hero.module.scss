@@ -1,0 +1,40 @@
+.hero {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.heroImage {
+  width: 100%;
+  height: auto; /* сохраняет пропорции */
+  display: block;
+}
+
+.heroContent {
+  position: absolute;
+  top: 25%; /* или другое фиксированное место */
+  left: 20%;
+  transform: none;
+  color: white;
+}
+
+.heroTitle {
+    // margin: -58px 0 0 0;
+    margin: 0;
+    padding: 0;
+    // padding: 158px 0 36px 0;
+    text-transform: uppercase;
+    color: white;
+    font-family: "Caveat", cursive;
+    font-size: 40px;
+    max-width: 310px;
+}
+
+.subTitle {
+    font-size: 22px;
+    max-width: 330px;
+    color: #d4fff3;
+    font-family: "Open Sans", sans-serif;
+    font-weight: 500;
+    margin-bottom: 45px;
+}

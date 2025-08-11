@@ -1,0 +1,30 @@
+.categories {
+    margin-bottom: 90px;
+}
+
+.categoriesList {
+    display: flex;
+    justify-content: space-between;
+    padding: 0;
+}
+
+.categoriesItem {
+    list-style-type: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .categoriesImage {
+        max-width: 100px;
+    }
+
+    .categoriesText {
+        color: #467166;
+        font-family: "Open Sans", sans-serif;
+        font-weight: 500;
+    }
+}
+
+.categoriesItem:nth-child(odd) {
+    margin-top: 23px;
+}

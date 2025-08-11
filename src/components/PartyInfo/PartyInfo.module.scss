@@ -1,0 +1,84 @@
+.partyInfo {
+    background-color: #2a7c6e;
+}
+
+.wave {
+    width: 100%;
+    margin-top: -5px;
+}
+
+.partyInfoTitle {
+    font-size: 32px;
+    font-weight: bold;
+    background: linear-gradient(90deg, #ffffff, #6a6a6a);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+    font-family: "Open Sans", sans-serif;
+    margin: 0 0 53px 0;
+}
+
+.partyInfoSuggestNewCocktailContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 58px;
+}
+
+.partyInfoSuggestNewCocktailText {
+    max-width: 500px;
+    font-size: 18px;
+    color: #d4fff3;
+    font-family: "Open Sans", sans-serif;
+    font-weight: 500;
+    margin: 0;
+    line-height: 38px;
+    transition: .3s;
+}
+
+.partyInfoSuggestNewCocktailImage {
+    max-width: 300px;
+}
+
+//
+
+.partyInfoNearestPartyConfirmedProfilesContainer {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 58px;
+}
+
+.partyInfoConfirmedTitleText {
+    margin: 0 0 18px 0;
+    font-size: 18px;
+    color: #d4fff3;
+    font-family: "Open Sans", sans-serif;
+    font-weight: 500;
+}
+
+.partyInfoNearestPartyContainer {
+    margin-bottom: 30px;
+}
+
+.partyInfoSubTitle {
+    max-width: 500px;
+    // font-size: 18px;
+    font-weight: bold;
+    background: linear-gradient(90deg, #ffffff, #c5c5c5);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+    font-family: "Open Sans", sans-serif;
+    margin: 0;
+}
+
+.partyInfoLink:hover {
+    opacity: .58;
+    transition: .3s;
+}
+
+.partyInfoAddressContainer {
+    padding-bottom: 50px;
+}
