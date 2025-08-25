@@ -3,12 +3,14 @@ import { useState, useRef, useEffect, useMemo } from 'react';
 import { db } from '../../firebase';
 import { collection, addDoc, getDocs, doc } from 'firebase/firestore';
 
-import styles from './Products.module.scss';
+import styles from './Catalog.module.scss';
 
-import Wrapper from '../Wrapper/Wrapper';
+import Wrapper from '../../components/Wrapper/Wrapper';
+
+import ProductsCard from '../../components/ProductCard/ProductCard';
 
 import waveImage from '../../image/wave.png';
-import ProductsCard from '../ProductCard/ProductCard';
+
 
 import Button from '@mui/material/Button';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
@@ -17,7 +19,7 @@ import Skeleton from '@mui/material/Skeleton';
 
 
 
-const Products = ({event, sectionRef, selectedProducts, onAddProduct, onRemoveProduct}) => {
+const Catalog = ({event, selectedProducts, onAddProduct, onRemoveProduct}) => {
 
     const [cocktails, setCocktails] = useState([]);
 
@@ -108,12 +110,11 @@ const Products = ({event, sectionRef, selectedProducts, onAddProduct, onRemovePr
 
 
     return (
-        <div className={styles.products} ref={sectionRef}>
-            <img src={waveImage} alt='' className={styles.wave} />
+        <div className={styles.products}>
             <div className={styles.productsContentContainer}>
                 <Wrapper>
                     <div className={styles.productsTitleCategoryContainer}>
-                        <h1 className={styles.productsTitle}>Выбирай напиток</h1>
+                        <h1 className={styles.productsTitle}>Полный список</h1>
                         <div ref={categoryRef} className={styles.productsCategoryWrapper}>
                             <div
                                 onClick={(e) => clickCategory(e)}
@@ -167,12 +168,9 @@ const Products = ({event, sectionRef, selectedProducts, onAddProduct, onRemovePr
                         </div>) :
                         (<div className={styles.productsContent}>
                             {sortingCocktails.map((cocktail, index) => (
-                                <ProductsCard hide={true} index={index} key={cocktail.id} id={cocktail.id} name={cocktail.name} image={cocktail.imageUrl} ingredients={cocktail.ingredients} type={cocktail.type} event={event} selectedProducts={selectedProducts} onAddProduct={onAddProduct} onRemoveProduct={onRemoveProduct} />
+                                <ProductsCard hide={false} index={index} key={cocktail.id} id={cocktail.id} name={cocktail.name} image={cocktail.imageUrl} ingredients={cocktail.ingredients} type={cocktail.type} event={event} selectedProducts={selectedProducts} onAddProduct={onAddProduct} onRemoveProduct={onRemoveProduct} />
                             ))}
                         </div>)}
-                        <div className={styles.productsContentButtonContainer}>
-                            <Button disabled={!event} sx={{width: '170px', borderRadius: '21px', backgroundColor: '#8ac640', textTransform: 'capitalize', fontSize: '16px', boxShadow: 'none',}} variant="contained">{event ? 'Показать больше' : 'Загрузка...'}</Button>
-                        </div>
                     </div>
                 </Wrapper>
             </div>
@@ -180,4 +178,4 @@ const Products = ({event, sectionRef, selectedProducts, onAddProduct, onRemovePr
     )
 }
 
-export default Products;
+export default Catalog;

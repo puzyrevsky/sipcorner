@@ -5,6 +5,7 @@
     max-width: 450px;
     overflow: hidden;
     margin-top: 50px;
+    margin-bottom: 50px;
 }
 
 .sectionAddCocktailFormContainer {
@@ -75,6 +76,19 @@
     max-width: 300px;
     width: 100%;
     height: 300px;
+    border-radius: 13px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sectionAddCocktailMiniatureContainer {
+    margin-top: 13px;
+    border: 2px dashed rgb(102, 102, 102);
+    max-width: 100px;
+    width: 100%;
+    height: 100px;
     border-radius: 13px;
     overflow: hidden;
     display: flex;

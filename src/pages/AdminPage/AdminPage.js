@@ -11,8 +11,9 @@ import Button from '@mui/material/Button';
 
 import SectionAddIngredients from '../../componentsAdmin/SectionAddIngredients/SectionAddIngredients';
 import SectionAddCocktail from '../../componentsAdmin/SectionAddCocktail/SectionAddCocktail';
+import SectionEvent from '../../componentsAdmin/SectionEvent/SectionEvent';
 
-const AdminPage = () => {
+const AdminPage = ({event}) => {
 
 // 
 
@@ -71,6 +72,8 @@ useEffect(() => {
                 }
             </div>
             <SectionAddCocktail />
+            <h3 className={styles.adminPageTitleText}>Мероприятия</h3>
+            {event !== null && !event.date ? <SectionEvent /> : <p>Есть актуальное мероприятие</p>}
         </Wrapper>
     </div>
   );

@@ -1,0 +1,45 @@
+.home {
+    position: relative;
+}
+
+.homeAlertContainer {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    position: fixed; 
+    top: 10px;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    justify-content: center;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.7);
+  }
+  50% {
+    transform: scale(1.15);
+    box-shadow: 0 0 15px 5px rgba(255, 107, 107, 0.4);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.7);
+  }
+}
+
+.homeBasketContainer {
+    position: fixed;
+    bottom: 100px;
+    right: 50px;
+    background-color: rgb(254, 128, 37);
+    width: 55px;
+    height: 55px;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: pulse 2.1s infinite ease-in-out;
+    cursor: pointer;
+}

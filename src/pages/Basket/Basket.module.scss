@@ -1,0 +1,99 @@
+.basket {
+    min-height: 100vh;
+
+    background: 
+        linear-gradient(135deg, #d0f4f9 0%, #b9e0d9 100%),
+        url('../../image/backgroundBasket.png') repeat;
+    background-size: auto;
+    background-blend-mode: multiply;
+    background-attachment: fixed; /* фиксируем фон */
+}
+
+.basketSectionTitle {
+    margin: 0 0 30px 0;
+    padding-top: 20px;
+
+    font-size: 26px;
+    font-weight: bold;
+    background: linear-gradient(90deg, #5ca55d, #234e47);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+    font-family: "Open Sans", sans-serif;
+}
+
+.basketInputNameContainer {
+    margin-bottom: 20px;
+}
+
+.basketGenderText {
+    margin: 0 0 10px 0;
+}
+
+.basketCardSelectedCocktail {
+    // background-color: #e9e9e93f;
+    background-color: #e9e9e900;
+    max-width: 300px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    padding-right: 10px;
+    margin: 18px 0;
+    overflow: hidden;
+    backdrop-filter: blur(2px);          /* само размытие */
+    -webkit-backdrop-filter: blur(2px);  /* для Safari */
+    box-shadow: 0 0 13px 1px rgba(0, 0, 0, 0.252);
+}
+
+.basketImageSelectedCocktailContainer {
+    background-color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center; 
+    max-width: 100px;
+    margin-right: 30px;
+    box-shadow: 0 0 25px 30px rgb(255 255 255);
+    padding: 10px 0 10px 13px;
+}
+
+.basketImageSelectedCocktail {
+    max-width: 100px;
+    max-height: 120px;
+    background-color: #ffffff;
+    // border-radius: 18px;
+    
+    // box-shadow: 0 0 35px 18px rgba(124, 124, 124, 0.258);
+}
+
+.basketCardSelectedCocktailInfoContainer {
+    margin: 7px 0;
+
+    .basketCardSelectedCocktailTitle {
+        font-size: 20px;
+        font-weight: bold;
+        background: linear-gradient(90deg, #2a7c6e, #234e47);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        color: transparent;
+        font-family: "Open Sans", sans-serif;
+        margin: 0;
+    }
+
+    .basketCardSelectedCocktailType {
+        margin: 3px 0 0 0;
+        font-size: 15px;
+        color: #4747478a;;
+    }
+
+    .basketCardSelectedCocktailQuantityText {
+        margin: 7px 0;
+    }
+
+    .basketCardSelectedCocktailButtonGroupContainer {
+        display: flex;
+        align-items: center;
+    }
+}
+

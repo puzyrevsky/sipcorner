@@ -13,16 +13,30 @@ import InfoOutlineIcon from '@mui/icons-material/InfoOutline';
 import CloseIcon from '@mui/icons-material/Close';
 import Button from '@mui/material/Button';
 import LocalBarIcon from '@mui/icons-material/LocalBar';
+import DoNotDisturbOnIcon from '@mui/icons-material/DoNotDisturbOn';
 
 
 
-const ProductsCard = ({type, name, image, ingredients}) => {
+const ProductsCard = ({hide, index, id, type, name, image, ingredients, event, selectedProducts, onAddProduct, onRemoveProduct}) => {
 
     const [listIngredients, setListIngredients] = useState([]);
 
     // loading coincidence ingredients
 
     const [loaded, setLoaded] = useState(false);
+
+
+    //
+
+    const isSelected = selectedProducts.includes(id);
+
+    const toggleSelect = () => {
+        if(isSelected) {
+            onRemoveProduct(id);
+        } else {
+            onAddProduct(id);
+        }
+    }
 
 
     //
@@ -45,16 +59,11 @@ const ProductsCard = ({type, name, image, ingredients}) => {
 
         return () => unsubscribe();
     }, [])
-
-    useEffect(() => {
-        console.log('listIngredients:', listIngredients);
-    }, [listIngredients]);
     
 
     // 
 
     const ingredientsQuantity = ingredients.length;
-    console.log(ingredientsQuantity)
 
     const count = listIngredients.filter((i) => ingredients.includes(i.name)).length;
 
@@ -101,8 +110,10 @@ const ProductsCard = ({type, name, image, ingredients}) => {
         setIsOpenMenuDescription('close');
     };
 
+    
+
     return (
-        <div className={styles.productsCardBorder} style={{border: borderColor}}>
+        <div className={styles.productsCardBorder} style={{border: borderColor, display: index > 2 && hide ? 'none' : ''}}>
                 <div className={styles.productsCard}>
                     <div className={`${styles.productsCardInfoContentContainer} 
                         ${isOpenMenuDescription === 'open' ? styles.productsCardInfoContentContainer__animationOpen : ''} 
@@ -127,7 +138,8 @@ const ProductsCard = ({type, name, image, ingredients}) => {
                         <h3 className={styles.productsCardName}>{name}</h3>
                         {(isOpenMenuDescription === null || isOpenMenuDescription === 'close') && (<div style={{marginTop: '1px'}}><InfoOutlineIcon onClick={openDescription} sx={{cursor: 'pointer'}} /></div>)}
                     </div>
-                    <Button sx={{ textTransform: 'capitalize', fontSize: '16px', width: '100%', marginTop: '21px', backgroundColor: '#2a7c6e'}} variant="contained" endIcon={<LocalBarIcon sx={{ width: 20, height: 20 }} />}>Выбрать</Button>
+                    <p className={styles.productsCardTypeText}>{type}</p>
+                    {event?.date ? (<Button onClick={toggleSelect} sx={{ textTransform: 'capitalize', fontSize: '16px', width: '100%', marginTop: '21px', backgroundColor: '#2a7c6e'}} variant="contained" endIcon={!isSelected ? (<LocalBarIcon sx={{ width: 20, height: 20 }} />) : (<DoNotDisturbOnIcon sx={{ width: 20, height: 20 }} />)}>{!isSelected ? 'Выбрать' : 'Отменить'}</Button>) : (<p className={styles.productsCardNotEventText}>Ближайших событий нет</p>)}
                 </div>
         </div>
     )

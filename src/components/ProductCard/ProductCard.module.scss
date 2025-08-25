@@ -103,17 +103,32 @@
     max-width: 225px;
 }
 
-.productsCardName {
-    // width: 100%;
-    margin: 0;
-    height: 50px;
-}
-
 .productsCardNameInfoContainer {
     // padding: 0 10px;
     width: 100%;
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    margin-top: 39px;
+    margin-top: 15px;
+}
+
+.productsCardName {
+    // width: 100%;
+    margin: 0;
+    height: 50px;
+}
+
+.productsCardTypeText {
+    margin: 10px 0 5px 0;
+    width: 100%;
+    display: inline;
+    text-align: start;
+    color: gray;
+    font-size: 14px;
+}
+
+.productsCardNotEventText {
+    line-height: 40px;
+    margin-top: 21px;
+    margin-bottom: 0;
 }

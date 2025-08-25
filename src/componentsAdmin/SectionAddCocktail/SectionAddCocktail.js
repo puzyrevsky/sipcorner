@@ -121,18 +121,27 @@ const [alignment, setAlignment] = useState('Алкогольный');
 
 // loading image cloudinary
 
-  const [previewUrl, setPreviewUrl] = useState('');
+  const [previewImageUrl, setPreviewImageUrl] = useState('');
+  const [previewMiniatureUrl, setPreviewMiniatureUrl] = useState('');
+
   const [loading, setLoading] = useState(false);
 
-  const fileInputRef = useRef(null);
+  const fileImageInputRef = useRef(null);
+  const fileMiniatureInputRef = useRef(null);
 
   const handleClickAddingImage = () => {
-    setPreviewUrl('');
-    if (fileInputRef.current) fileInputRef.current.value = '';
-    fileInputRef.current?.click();
+    setPreviewImageUrl('');
+    if (fileImageInputRef.current) fileImageInputRef.current.value = '';
+    fileImageInputRef.current?.click();
   }
 
-  const handleUpload = async (event) => {
+const handleClickAddingMiniature = () => {
+    setPreviewMiniatureUrl('');
+    if (fileMiniatureInputRef.current) fileMiniatureInputRef.current.value = '';
+    fileMiniatureInputRef.current?.click();
+  }
+
+  const handleUpload = async (event, type) => {
     const file = event.target.files[0];
     if (!file) return;
 
@@ -156,8 +165,11 @@ const [alignment, setAlignment] = useState('Алкогольный');
       const data = await res.json();
 
       if (data.secure_url) {
-        setPreviewUrl(data.secure_url);
-        console.log('Image uploaded:', data.secure_url);
+        if(type === 'image') {
+            setPreviewImageUrl(data.secure_url);
+        } else if(type === 'miniature') {
+            setPreviewMiniatureUrl(data.secure_url);
+        }
         // Тут можно, например, отправить ссылку в Firebase
       } else {
         console.error('Upload failed', data);
@@ -179,7 +191,8 @@ const addCocktail = async () => {
         name,                                  // название
         ingredients: listIngredients,          // массив ингредиентов
         type: alignment,                       // категория: Алкогольный/Безалкогольный/Шот
-        imageUrl: previewUrl || null,          // ссылка на фото (может быть null)
+        imageUrl: previewImageUrl || null,          // ссылка на фото (может быть null)
+        miniatureUrl: previewMiniatureUrl || null, 
         createdAt: serverTimestamp(),          // серверное время
     };
 
@@ -190,7 +203,8 @@ const addCocktail = async () => {
         // очистим форму
         setNameTextInput('');
         setListIngredients([]);
-        setPreviewUrl('');
+        setPreviewImageUrl('');
+        setPreviewMiniatureUrl('');
         setAlignment('Алкогольный');
         alert('Коктейль сохранён!');
 
@@ -207,7 +221,8 @@ const isSaveDisabled =
   !nameTextInput.trim() ||         // нет названия
   listIngredients.length === 0 ||  // нет ингредиентов
   nameIngredientTextInput.trim() ||
-  !previewUrl; 
+  !previewImageUrl || 
+  !previewMiniatureUrl;
 
     return (
         <div className={styles.sectionAddCocktail} 
@@ -271,11 +286,11 @@ const isSaveDisabled =
                         </div>
                         <div className={styles.sectionAddCocktailAddImageContainer}>
                             <div>
-                                {previewUrl && (<p style={{margin: '0px 0px 10px 0'}}>Загружено:</p>)}
+                                {/* {previewUrl && (<p style={{margin: '0px 0px 10px 0'}}>Загружено:</p>)} */}
                                 <div className={styles.sectionAddCocktailImageContainer}>
-                                    {previewUrl ? (
+                                    {previewImageUrl ? (
                                         <img
-                                            src={previewUrl}
+                                            src={previewImageUrl}
                                             alt="Uploaded"
                                             style={{
                                             maxWidth: '300px',
@@ -287,16 +302,38 @@ const isSaveDisabled =
                                         ) : (
                                         <p>{loading ? 'Загрузка изображения...' : 'Изображение не выбрано'}</p>
                                     )}
-                                    {/* {loading && <p>Загрузка изображения...</p>} */}
+                                </div>
+                                <div className={styles.sectionAddCocktailMiniatureContainer}>
+                                    {previewMiniatureUrl ? (
+                                        <img
+                                            src={previewMiniatureUrl}
+                                            alt="Uploaded"
+                                            style={{
+                                            maxWidth: '100px',
+                                            width: '100%',
+                                            height: '100px',
+                                            objectFit: 'contain'
+                                            }}
+                                        />
+                                        ) : (
+                                        <p style={{fontSize: '12px', textAlign: 'center'}}>{loading ? 'Загрузка миниатюры...' : 'Миниатюра не выбрана'}</p>
+                                    )}
                                 </div>
                             </div>
-                            <input ref={fileInputRef} style={{ display: "none" }} onClick={(e) => { e.currentTarget.value = null; }} type="file" onChange={handleUpload} />
+                            <input ref={fileImageInputRef} style={{ display: "none" }} onClick={(e) => { e.currentTarget.value = null; }} type="file" onChange={(e) => handleUpload(e, 'image')} />
+                            <input ref={fileMiniatureInputRef} style={{ display: "none" }} onClick={(e) => { e.currentTarget.value = null; }} type="file" onChange={(e) => handleUpload(e, 'miniature')} />
                             <Button
                                 sx={{marginTop: '13px'}}
                                 variant="contained"
                                 startIcon={<CloudUploadIcon />}
                                 onClick={handleClickAddingImage}
                             >Загрузить изображение</Button>
+                            <Button
+                                sx={{marginTop: '13px'}}
+                                variant="contained"
+                                startIcon={<CloudUploadIcon />}
+                                onClick={handleClickAddingMiniature}
+                            >Загрузить миниатюру</Button>
                         </div>
                         <div onClick={() => { if (!isSaveDisabled) addCocktail(); }} className={styles.sectionAddCocktailButtonSave} style={{backgroundColor: isSaveDisabled ? 'grey' : undefined, cursor: isSaveDisabled ? 'default' : 'pointer', opacity: isSaveDisabled ? 0.55 : 1,}}>
                             <p style={{color: nameIngredientTextInput && 'white'}} className={styles.sectionAddCocktailButtonSaveText}>Сохранить коктейль</p>

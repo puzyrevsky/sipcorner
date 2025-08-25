@@ -39,14 +39,27 @@
 }
 
 .confirmedProfilesCocktailImage {
+    background-color: #e8f7f2;
     width: 35px;
     height: 35px;
     border-radius: 50px;
     border: 3px solid rgb(13, 204, 13);
+    cursor: pointer;
+    transition: .3s;
+}
+
+.confirmedProfilesCocktailImage:hover {
+    transition: .3s;
+    background-color: #e8f7f291;
+    border: 3px solid rgb(13, 166, 13);
 }
 
 .confirmedProfilesCocktailImageOther {
     transform: translateX(-20px);
+}
+
+.confirmedProfilesCocktailImageHidden {
+    display: none;
 }
 
 .confirmedProfilesOpenAllCocktailButton {
@@ -54,9 +67,17 @@
     align-items: center;
     justify-content: center;
     transform: translateX(-40px);
-    border: 3px solid rgb(255 255 255);
+    border: 3px dashed rgba(254, 254, 254, 0.199);
     width: 35px;
     height: 35px;
     border-radius: 50px;
     background-color: rgb(91 131 25);
+    cursor: pointer;
+    transition: background-color 0.35s ease, border-color 0.8s ease;
+}
+
+.confirmedProfilesOpenAllCocktailButton:hover {
+    background-color: rgb(74, 107, 21);
+    border: 3px dashed #e8f7f2;
+    transition: background-color 0.35s ease, border-color 0.8s ease;
 }
