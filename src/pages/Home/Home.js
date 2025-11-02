@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect, useLayoutEffect } from 'react';
-import {useNavigate, useLocation} from 'react-router-dom';
+import {useNavigate, useNavigationType, useLocation} from 'react-router-dom';
 
+import { useDisableScrollRestoration } from "../../hooks/useDisableScrollRestoration";
 import styles from './Home.module.scss';
 import { months } from '../../data/months';
 
@@ -23,11 +24,19 @@ import Skeleton from '@mui/material/Skeleton';
 
 
 
-const Home = ({onHandleScroll, event, loadingEvent, isProductInListSelected, selectedProducts, onAddProduct, onRemoveProduct, showSuccessfulNotification, onSwitchSuccessfulNotification}) => {
+const Home = ({cocktails, onHandleScroll, event, loadingEvent, isProductInListSelected, selectedProducts, onAddProduct, onRemoveProduct, showSuccessfulNotification, onSwitchSuccessfulNotification}) => {
+  useDisableScrollRestoration();
+
 
   const location = useLocation();
 
   const navigate = useNavigate();
+
+  const navigationType = useNavigationType();
+
+
+
+
 
   const sectionRef = useRef(null);
 
@@ -54,20 +63,26 @@ const Home = ({onHandleScroll, event, loadingEvent, isProductInListSelected, sel
 
   // 
 
-  useLayoutEffect(() => {
-    if (location.state?.scrollTo) {
-      const el = document.getElementById(location.state.scrollTo);
-      if (el) {
-        const y = el.getBoundingClientRect().top + window.scrollY;
-        window.scrollTo({
-          top: y - 50,
-          behavior: "smooth"
-        });
-      }
+useLayoutEffect(() => {
+  if (!location.state?.scrollTo) return;
 
-      navigate(".", { replace: true });
+  const scrollTo = location.state.scrollTo;
+
+  if (scrollTo === "bottom") {
+    window.scrollTo({ top: document.body.scrollHeight, behavior: "auto" });
+  } else if (scrollTo === "top") {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  } else {
+    const el = document.getElementById(scrollTo);
+    if (el) {
+      const y = el.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo({ top: y - 50, behavior: "smooth" });
     }
-  }, [location, navigate]);
+  }
+
+  // ✅ всегда очищаем state, чтобы эффект не зацикливался
+  navigate(".", { replace: true, state: {} });
+}, [location, navigate]);
 
     
   // 
@@ -82,15 +97,53 @@ const Home = ({onHandleScroll, event, loadingEvent, isProductInListSelected, sel
   }
 
 
+  // 
+
+
+
+
+
+
+//   useLayoutEffect(() => {
+//   if (location.state?.scrollTo) {
+//     if (location.state.scrollTo === "bottom") {
+//       // 👉 если явно указали "bottom" — скроллим вниз
+//       window.scrollTo({
+//         top: document.body.scrollHeight,
+//         behavior: "instant"
+//       });
+//     } else {
+//       // 👉 иначе ищем элемент по id
+//       const el = document.getElementById(location.state.scrollTo);
+//       if (el) {
+//         const y = el.getBoundingClientRect().top + window.scrollY;
+//         window.scrollTo({
+//           top: y - 50,
+//           behavior: "smooth"
+//         });
+//       }
+//     }
+
+//     // очищаем state, чтобы скролл не повторялся
+//     navigate(".", { replace: true });
+//   }
+// }, [location, navigate]);
+
+
+
+
+
+
     return (
         <div className={styles.home}>
             {showSuccessfulNotification &&
               (<div className={styles.homeAlertContainer}>
-                <Box sx={{ maxWidth: '700px', width: '100%' }}>
+                <Box sx={{ maxWidth: '895px', width: '100%' }}>
                   <Collapse in={showSuccessfulNotification}>
                     <Alert
                       action={
-                        <IconButton 
+                        <IconButton
+                          sx={{marginLeft: '18px'}}
                           aria-label="close"
                           color="inherit"
                           size="small"
@@ -107,7 +160,7 @@ const Home = ({onHandleScroll, event, loadingEvent, isProductInListSelected, sel
                         fontSize: "16px",
                         display: "flex",
                         minHeight: "40px",
-                        alignItems: "center",
+                        alignItems: 'stretch',
                         "& .MuiAlert-action": {
                           padding: 0,         // убираем дефолтные отступы
                           marginLeft: "auto", // уводим крестик максимально вправо
@@ -123,7 +176,7 @@ const Home = ({onHandleScroll, event, loadingEvent, isProductInListSelected, sel
             <Hero onHandleScroll={handleScroll} />
             <Instructions />
             <Categories />
-            <Products event={event} sectionRef={sectionRef} selectedProducts={selectedProducts} onAddProduct={onAddProduct} onRemoveProduct={onRemoveProduct} />
+            <Products id="products" cocktails={cocktails} event={event} sectionRef={sectionRef} selectedProducts={selectedProducts} onAddProduct={onAddProduct} onRemoveProduct={onRemoveProduct} />
             <PartyInfo id="last-details" event={event} loadingEvent={loadingEvent} formatDateRu={formatDateRu} />
             {isProductInListSelected && <div onClick={clickToBasketPage} className={styles.homeBasketContainer}><ShoppingCartIcon sx={{fontSize: '30px', color: 'white'}} /></div>}
         </div>

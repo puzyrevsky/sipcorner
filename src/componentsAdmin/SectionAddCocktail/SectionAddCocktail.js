@@ -3,6 +3,9 @@ import { useState, useRef, useEffect } from 'react';
 import styles from './SectionAddCocktail.module.scss';
 
 import Button from '@mui/material/Button';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch from '@mui/material/Switch';
 import TextField from '@mui/material/TextField';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
@@ -15,11 +18,13 @@ import WineBarIcon from '@mui/icons-material/WineBar';
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import CheckIcon from '@mui/icons-material/Check';
 
 import { addDoc, collection, doc, setDoc, getDocs, deleteDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../../firebase'; // путь может отличаться
 
-
+import stubImageCocktail from '../../image/stub-image-cocktail.png';
+import stubMiniatureCocktail from '../../image/stub-miniature-cocktail.png';
 
 const SectionAddCocktail = () => {
 
@@ -30,7 +35,12 @@ const [showSection, setShowSection] = useState(false);
     const [nameTextInput, setNameTextInput] = useState('');
 
     const handleNameTextInput = (e) => {
-        setNameTextInput(e.target.value);
+        let value = e.target.value;
+        if (value.length === 1) {
+            value = value.charAt(0).toUpperCase();
+        }
+
+        setNameTextInput(value);
     }
 
 // 
@@ -41,17 +51,99 @@ const [showSection, setShowSection] = useState(false);
     const [nameIngredientTextInput, setNameIngredientTextInput] = useState('');
 
     const handleNameIngredientTextInput = (e) => {
-        setNameIngredientTextInput(e.target.value);
+        let value = e.target.value;
+        if (value.length === 1) {
+            value = value.charAt(0).toUpperCase();
+        }
+        setNameIngredientTextInput(value);
     }
+
+    
+    // 
+
+    const [quantityIngredient, setQuantityIngredient] = useState('');
+
+    const handleQuantityIngredient = (e) => {
+        setQuantityIngredient(e.target.value);
+    }
+
+
+    // 
+
+    const measurementList = ['мл.', 'шт.', 'гр.', 'унц.', 'шот', 'бар. лож.', 'ч. л.', 'ст. л.', 'дэш', 'капл.', 'top', 'щепот.', 'слой', 'лист.', 'половин.'];
+
+    const [measurement, setMeasurement] = useState('мл.');
+
+    const [isExpandMeasurement, setIsExpandMeasurement] = useState(false);
+    const [hasClicked, setHasClicked] = useState(false);
+
+    const clickMeasurement = (event) => {
+        if (event) {
+            event.stopPropagation();
+        }
+        setHasClicked(true);
+        setIsExpandMeasurement(prev => !prev);
+    };
+
+    const clickSelectMeasurement = (selectedMeasurement) => {
+        if(selectedMeasurement === measurement) {
+            return;
+        }
+        setMeasurement(selectedMeasurement);
+        clickMeasurement();
+    }
+
+
+    const measurementRef = useRef(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (measurementRef.current && !measurementRef.current.contains(event.target)) {
+                setIsExpandMeasurement(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
+
+    // 
+
+    const isAddDisabled = (measurement === 'top' || measurement === 'слой')
+        ? !nameIngredientTextInput.trim()    // только название обязательно
+        : (!nameIngredientTextInput.trim() || !quantityIngredient.trim()); // название + количество
+
 
     const handleButtonAddIngredient = () => {
-        const trimmed = nameIngredientTextInput.trim();
+        const name = nameIngredientTextInput.trim();
+        const quantity = quantityIngredient.trim();
 
-        if(!trimmed) return;
+        // if(measurement === 'top' || measurement === 'слой') {
+        //     if(!name) return;
+        // } else if(!name || !quantity) return;
 
-        setListIngredients(prev => [...prev, trimmed]);
+        // if(!name || !quantity) return;
+
+        if(isAddDisabled) return;
+
+        const ingredient = {
+            name,
+            quantity,
+            unit: measurement,
+        }
+
+        setListIngredients(prev => [...prev, ingredient]);
+
         setNameIngredientTextInput('');
+        setQuantityIngredient('');
+        setMeasurement('мл.');
     }
+
+
+    // 
 
     const handleButtonDeleteIngredient = (index) => {
         setListIngredients(prev => prev.filter((_, i) => i !== index));
@@ -117,6 +209,17 @@ const [alignment, setAlignment] = useState('Алкогольный');
         setAlignment(newAlignment);
     }
   };
+
+
+// handle checked have image
+
+const [haveImage, setHaveImage] = useState(true);
+
+const handleHaveImage = (event) => {
+    setPreviewImageUrl('');
+    setPreviewMiniatureUrl('');
+    setHaveImage(event.target.checked);
+}
 
 
 // loading image cloudinary
@@ -187,12 +290,20 @@ const addCocktail = async () => {
 
     const name = nameTextInput.trim();
 
+    const newDocRef = doc(collection(db, 'cocktails'));
+
     const payload = {
+        id: newDocRef.id,
         name,                                  // название
-        ingredients: listIngredients,          // массив ингредиентов
+        ingredients: listIngredients.map(ing => ({
+            name: ing.name,
+            quantity: ing.quantity,
+            unit: ing.unit,
+        })), // массив ингредиентов
         type: alignment,                       // категория: Алкогольный/Безалкогольный/Шот
-        imageUrl: previewImageUrl || null,          // ссылка на фото (может быть null)
-        miniatureUrl: previewMiniatureUrl || null, 
+        haveImage: haveImage,
+        imageUrl: haveImage ? previewImageUrl : stubImageCocktail,          // ссылка на фото (может быть null)
+        miniatureUrl: haveImage ? previewMiniatureUrl : stubMiniatureCocktail, 
         createdAt: serverTimestamp(),          // серверное время
     };
 
@@ -205,6 +316,7 @@ const addCocktail = async () => {
         setListIngredients([]);
         setPreviewImageUrl('');
         setPreviewMiniatureUrl('');
+        setHaveImage(true);
         setAlignment('Алкогольный');
         alert('Коктейль сохранён!');
 
@@ -213,16 +325,16 @@ const addCocktail = async () => {
     }
 }
 
-
 // 
+
 
 const isSaveDisabled =
   loading ||                       // пока грузится фото
   !nameTextInput.trim() ||         // нет названия
   listIngredients.length === 0 ||  // нет ингредиентов
   nameIngredientTextInput.trim() ||
-  !previewImageUrl || 
-  !previewMiniatureUrl;
+  (haveImage && (!previewImageUrl || !previewMiniatureUrl));
+  quantityIngredient.trim();
 
     return (
         <div className={styles.sectionAddCocktail} 
@@ -238,7 +350,7 @@ const isSaveDisabled =
                 ))}
             </div> */}
             <div className={styles.sectionAddCocktailFormContainer} style={{margin: !showSection ? '18px 13px 18px 13px' : '18px 13px 0px 13px',}}>
-                <div onClick={() => { if(showSection) setShowSection(false)}} className={styles.sectionAddCocktailTitleOpenContainer} style={{marginBottom: !showSection ? '0px' : '23px', borderBottom: !showSection ? 'none' : '1px solid rgba(128, 128, 128, 0.709)', paddingBottom: !showSection ? '0px' : '20px', cursor: showSection && 'pointer'}}>
+                <div onClick={() => { if(showSection) setShowSection(false)}} className={styles.sectionAddCocktailTitleOpenContainer} style={{marginBottom: !showSection ? '18px' : '23px', borderBottom: !showSection ? 'none' : '1px solid rgba(128, 128, 128, 0.709)', paddingBottom: !showSection ? '0px' : '20px', cursor: showSection && 'pointer'}}>
                     <p className={styles.sectionAddCocktailTitleOpenContainerText}>Добавить коктейль</p>
                     <div>
                         {!showSection ? (<KeyboardArrowDownIcon />) : (<KeyboardArrowUpIcon />)}
@@ -251,17 +363,58 @@ const isSaveDisabled =
                             <div className={styles.sectionAddCocktailIngredientsContainer}>
                                 {listIngredients.map((ingredient, index) => (
                                     <div key={index} className={styles.sectionAddIngredientsBlockIngredient}>
-                                        <p className={styles.sectionAddIngredientsBlockIngredientText}>{ingredient}</p>
+                                        <p className={styles.sectionAddIngredientsBlockIngredientText}>{ingredient.name} &nbsp;·&nbsp; {ingredient.quantity} {ingredient.unit}</p>
                                         <CloseIcon onClick={() => handleButtonDeleteIngredient(index)} sx={{cursor: 'pointer', position: 'absolute', right: '11px', top: '9px'}}/>
                                     </div>
                                 ))}
                             </div>
                         }
                         <div style={{marginTop: listIngredients.length === 0 ? '20px' : '0px'}} className={styles.sectionAddCocktailFormAddIngredientsContainer}>
-                            <TextField value={nameIngredientTextInput} onChange={(e) => handleNameIngredientTextInput(e)} sx={{width: '100%', marginRight: '13px'}} id="outlined-basic" label="Название ингредиента" variant="outlined" />
-                            <Fab disabled={!nameIngredientTextInput.trim()} onClick={handleButtonAddIngredient} sx={{width: '70px', height: '55px', borderRadius: '8px'}} color="primary" aria-label="add">
-                                <AddIcon />
-                            </Fab>
+                            <div className={styles.sectionAddCocktailFormAddIngredients}>
+                                <TextField value={nameIngredientTextInput} onChange={(e) => handleNameIngredientTextInput(e)} sx={{width: '100%', marginRight: '13px', marginBottom: '17px'}} id="outlined-basic" label="Название ингредиента" variant="outlined" />
+                                {/* <Fab disabled={!nameIngredientTextInput.trim()} onClick={handleButtonAddIngredient} sx={{width: '70px', height: '55px', borderRadius: '8px'}} color="primary" aria-label="add">
+                                    <AddIcon />
+                                </Fab> */}
+                            </div>
+                            <div className={styles.sectionAddCocktailFormAddIngredientsQuantity}>
+                                <TextField value={quantityIngredient} onChange={(e) => handleQuantityIngredient(e)} type="number" inputProps={{ min: 0, pattern: "[0-9]*", inputMode: "numeric"}} sx={{width: '100%', marginRight: '13px'}} id="outlined-basic" label="Количество" variant="outlined" />
+                                <div ref={measurementRef} className={styles.productsCategoryWrapper}>
+                                    <div
+                                        onClick={(e) => clickMeasurement(e)}
+                                        className={styles.productsCategoryContainer}
+                                        style={{ borderRadius: isExpandMeasurement ? '13px 13px 0 0' : '13px' }}
+                                    >
+                                        <p>{measurement}</p>
+                                        <div className={
+                                            hasClicked
+                                                ? (isExpandMeasurement
+                                                    ? styles.productsCategoryArrowBottomContainer
+                                                    : styles.productsCategoryArrowTopContainer)
+                                                : ''
+                                        }>
+                                            <KeyboardArrowDownIcon sx={{marginTop: '5px'}} />
+                                        </div>
+                                    </div>
+                                    {isExpandMeasurement && 
+                                        <div className={styles.productsCategoryListContainer}>
+                                            <ul className={styles.productsCategoryList}>
+                                                {measurementList.map((item, index) => (
+                                                <li
+                                                    key={index}
+                                                    onClick={() => clickSelectMeasurement(item)}
+                                                    className={`${item !== isExpandMeasurement
+                                                    ? styles.productsCategoryItem
+                                                    : styles.productsCategoryItem__selected}`}
+                                                >
+                                                    {item} {item === measurement && <CheckIcon sx={{ fontSize: '20px' }} />}
+                                                </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                            <Button variant="contained" disabled={isAddDisabled} onClick={handleButtonAddIngredient} sx={{width: '100%', height: '34px', borderRadius: '8px', marginTop: '17px'}} color="primary" aria-label="add">Добавить</Button>
                         </div>
                         <div className={styles.sectionAddCocktailCategoriesContainer}>
                             <p className={styles.sectionAddCocktailCategoriesText}>{alignment}</p>
@@ -286,54 +439,69 @@ const isSaveDisabled =
                         </div>
                         <div className={styles.sectionAddCocktailAddImageContainer}>
                             <div>
-                                {/* {previewUrl && (<p style={{margin: '0px 0px 10px 0'}}>Загружено:</p>)} */}
-                                <div className={styles.sectionAddCocktailImageContainer}>
-                                    {previewImageUrl ? (
-                                        <img
-                                            src={previewImageUrl}
-                                            alt="Uploaded"
-                                            style={{
-                                            maxWidth: '300px',
-                                            width: '100%',
-                                            height: '300px',
-                                            objectFit: 'contain'
-                                            }}
-                                        />
-                                        ) : (
-                                        <p>{loading ? 'Загрузка изображения...' : 'Изображение не выбрано'}</p>
-                                    )}
-                                </div>
-                                <div className={styles.sectionAddCocktailMiniatureContainer}>
-                                    {previewMiniatureUrl ? (
-                                        <img
-                                            src={previewMiniatureUrl}
-                                            alt="Uploaded"
-                                            style={{
-                                            maxWidth: '100px',
-                                            width: '100%',
-                                            height: '100px',
-                                            objectFit: 'contain'
-                                            }}
-                                        />
-                                        ) : (
-                                        <p style={{fontSize: '12px', textAlign: 'center'}}>{loading ? 'Загрузка миниатюры...' : 'Миниатюра не выбрана'}</p>
-                                    )}
-                                </div>
+                                <FormGroup>
+                                    <FormControlLabel
+                                        control={
+                                            <Switch
+                                                checked={haveImage}
+                                                onChange={handleHaveImage}
+                                                slotProps={{ input: { 'aria-label': 'controlled' } }}
+                                            />
+                                        }
+                                        label={haveImage ? 'Есть фото' : 'Нет фото'}
+                                    />
+                                </FormGroup>
+                                {haveImage && (
+                                    <div> 
+                                        <div className={styles.sectionAddCocktailImageContainer}>
+                                            {previewImageUrl ? (
+                                                <img
+                                                    src={previewImageUrl}
+                                                    alt="Uploaded"
+                                                    style={{
+                                                    maxWidth: '300px',
+                                                    width: '100%',
+                                                    height: '300px',
+                                                    objectFit: 'contain'
+                                                    }}
+                                                />
+                                                ) : (
+                                                <p>{loading ? 'Загрузка изображения...' : 'Изображение не выбрано'}</p>
+                                            )}
+                                        </div>
+                                        <div className={styles.sectionAddCocktailMiniatureContainer}>
+                                            {previewMiniatureUrl ? (
+                                                <img
+                                                    src={previewMiniatureUrl}
+                                                    alt="Uploaded"
+                                                    style={{
+                                                    maxWidth: '100px',
+                                                    width: '100%',
+                                                    height: '100px',
+                                                    objectFit: 'contain'
+                                                    }}
+                                                />
+                                                ) : (
+                                                <p style={{fontSize: '12px', textAlign: 'center'}}>{loading ? 'Загрузка миниатюры...' : 'Миниатюра не выбрана'}</p>
+                                            )}
+                                        </div>
+                                        <input ref={fileImageInputRef} style={{ display: "none" }} onClick={(e) => { e.currentTarget.value = null; }} type="file" onChange={(e) => handleUpload(e, 'image')} />
+                                        <input ref={fileMiniatureInputRef} style={{ display: "none" }} onClick={(e) => { e.currentTarget.value = null; }} type="file" onChange={(e) => handleUpload(e, 'miniature')} />
+                                        <Button
+                                            sx={{marginTop: '13px'}}
+                                            variant="contained"
+                                            startIcon={<CloudUploadIcon />}
+                                            onClick={handleClickAddingImage}
+                                        >Загрузить изображение</Button>
+                                        <Button
+                                            sx={{marginTop: '13px'}}
+                                            variant="contained"
+                                            startIcon={<CloudUploadIcon />}
+                                            onClick={handleClickAddingMiniature}
+                                        >Загрузить миниатюру</Button>
+                                    </div>)
+                                }
                             </div>
-                            <input ref={fileImageInputRef} style={{ display: "none" }} onClick={(e) => { e.currentTarget.value = null; }} type="file" onChange={(e) => handleUpload(e, 'image')} />
-                            <input ref={fileMiniatureInputRef} style={{ display: "none" }} onClick={(e) => { e.currentTarget.value = null; }} type="file" onChange={(e) => handleUpload(e, 'miniature')} />
-                            <Button
-                                sx={{marginTop: '13px'}}
-                                variant="contained"
-                                startIcon={<CloudUploadIcon />}
-                                onClick={handleClickAddingImage}
-                            >Загрузить изображение</Button>
-                            <Button
-                                sx={{marginTop: '13px'}}
-                                variant="contained"
-                                startIcon={<CloudUploadIcon />}
-                                onClick={handleClickAddingMiniature}
-                            >Загрузить миниатюру</Button>
                         </div>
                         <div onClick={() => { if (!isSaveDisabled) addCocktail(); }} className={styles.sectionAddCocktailButtonSave} style={{backgroundColor: isSaveDisabled ? 'grey' : undefined, cursor: isSaveDisabled ? 'default' : 'pointer', opacity: isSaveDisabled ? 0.55 : 1,}}>
                             <p style={{color: nameIngredientTextInput && 'white'}} className={styles.sectionAddCocktailButtonSaveText}>Сохранить коктейль</p>

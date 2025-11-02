@@ -1,0 +1,86 @@
+// .sectionUsersChose {
+//     padding-top: 4px;
+//     box-shadow: 0px 0px 18px 1px rgba(146, 146, 146, 0.741);
+//     border-radius: 13px;
+//     max-width: 450px;
+//     overflow: hidden;
+//     margin-top: 50px;
+//     margin-bottom: 50px;
+// }
+
+// .sectionUsersChoseFormContainer {
+//     max-width: 450px;
+//     display: flex;
+//     flex-direction: column;
+// }
+
+// .sectionUsersChoseTitleOpenContainer {
+//     display: flex;
+//     align-items: center;
+//     justify-content: space-between;
+
+//     .sectionUsersChoseTitleOpenContainerText {
+//         margin: 0 0 4px 0;
+//         font-weight: 700;
+//         font-size: 18px;
+//         user-select: none;
+//     }
+// }
+
+
+//
+
+
+.sectionUsersChose {
+    padding-top: 4px;
+    box-shadow: 0px 0px 18px 1px rgba(146, 146, 146, 0.741);
+    border-radius: 13px;
+    max-width: 450px;
+    overflow: hidden;
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+.sectionUsersChoseFormContainer {
+    max-width: 450px;
+    display: flex;
+    flex-direction: column;
+}
+
+.sectionUsersChoseTitleOpenContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .sectionUsersChoseTitleOpenContainerText {
+        margin: 0 0 4px 0;
+        font-weight: 700;
+        font-size: 18px;
+        user-select: none;
+    }
+}
+
+.sectionUsersChoseTitleQuantityPeople {
+    font-weight: 400;
+    font-size: 14px;
+    margin-left: 13px;
+    background-color: #e7e7e7;
+    padding: 5px 11px;
+    border-radius: 20px;
+}
+
+
+.sectionUsersChosePersonCardContainer {
+    background-color: #e7e7e7;
+    padding: 5px 10px;
+    border-radius: 13px;
+    margin-bottom: 10px;
+
+    p {
+        font-weight: 700;
+    }
+}
+
+.sectionUsersChoseNoSelectedText {
+    margin: 0 0 19px 0;
+}

@@ -1,11 +1,13 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 import styles from './PartyInfo.module.scss';
 import { months } from '../../data/months';
 
 import Wrapper from '../Wrapper/Wrapper';
 
-import waveImage from '../../image/waveTwo.png';
+import waveImageEmpty from '../../image/waveTwoEmpty.png';
+import orangeDecor from '../../image/orange-decoration.png';
+
 import imagePartyInfo from '../../image/party-info.png';
 
 import Button from '@mui/material/Button';
@@ -39,14 +41,36 @@ const PartyInfo = ({event, loadingEvent, id, formatDateRu}) => {
     const [isShowAllPeople, setIsShowAllPeople] = useState(false);
 
 
+// 
+
+
+useEffect(() => {
+  document.body.classList.add("home-background");
+
+  return () => {
+    document.body.classList.remove("home-background");
+  };
+}, []);
+
+
+// 
+
+
 
     return (
         <div className={styles.partyInfo}>
-            <img src={waveImage} alt='' className={styles.wave} />
+            {/* <picture> */}
+                {/* <source media="(max-width: 200px)" srcSet={waveImageSmoll} />
+                <source media="(max-width: 850px)" srcSet={waveImageMiddle} /> */}
+            {/* </picture> */}
+            <div className={styles.waveContainer}>
+                <img src={waveImageEmpty} alt=" " className={styles.wave} />
+                <img src={orangeDecor} alt=" " className={styles.orangeDecor} />
+            </div>
             <Wrapper>
                 <h1 id={id} className={styles.partyInfoTitle}>Последние детали</h1>
                 <div className={styles.partyInfoSuggestNewCocktailContainer}>
-                    <div>
+                    <div className={styles.partyInfoSuggestNewCocktailTextButtonContainer}>
                         <p className={styles.partyInfoSuggestNewCocktailText}>Не увидел в списке то, что любишь или хотел попробовать?</p>
                         <p className={styles.partyInfoSuggestNewCocktailText}>Дай знать в Telegram — договоримся!</p>
                         <Button 
@@ -69,20 +93,20 @@ const PartyInfo = ({event, loadingEvent, id, formatDateRu}) => {
                 </div>
                 <div className={styles.partyInfoNearestPartyConfirmedProfilesContainer}>
                     <div className={styles.partyInfoNearestPartyContainer}>
-                        <h2 className={styles.partyInfoSubTitle}>Когда собираемся:</h2>
-                        {loadingEvent ? (<Skeleton variant="text" height={22} width={165} sx={{marginTop: '10px', transform: "scale(1, 0.9)"}} />) : (<p className={styles.partyInfoSuggestNewCocktailText}>{event.date ? `${formatDateRu(event.date)} в ${event.time}` : 'Событий нет'}</p>)}
+                        <h2 className={styles.partyInfoSubTitle} style={{marginTop: !event?.date ? '80px' : ''}}>Когда собираемся:</h2>
+                        {loadingEvent ? (<Skeleton variant="text" height={22} width={165} sx={{marginTop: '10px', transform: "scale(1, 0.9)"}} />) : (<p className={styles.partyInfoSuggestNewCocktailTextEvent}>{event?.date ? `${formatDateRu(event.date)} в ${event?.time}` : 'Событий нет'}</p>)}
                     </div>
-                    <div className={styles.partyInfoSectionConfirmedContainer}>
-                        {event?.date && <p style={{margin: event?.people.length > 0 ? '0 0 18px 0' : '0'}} className={styles.partyInfoConfirmedTitleText}>Подтвердили:</p>}
+                    <div className={styles.partyInfoSectionConfirmedContainer} style={{marginBottom: people.length === 0 ? '80px' : ''}}>
+                        {event?.date && <p style={{margin: people.length > 0 ? '0 0 18px 0' : '0'}} className={styles.partyInfoConfirmedTitleText}>Подтвердили:</p>}
                         {event?.date && (<div>
-                            {event?.people.length > 0 ?
+                            {people.length > 0 ?
                                 (<div>
                                     {people.map((person, index) => (
-                                        <ConfirmedProfiles index={index} key={person.index} drinks={person.drinks} name={person.name} gender={person.gender} isShowAllPeople={isShowAllPeople} />
+                                        <ConfirmedProfiles index={index} key={person.id} userId={person.id} drinks={person.drinks} name={person.name} gender={person.gender} isShowAllPeople={isShowAllPeople} />
                                     ))}
                                 </div>) 
                                 :
-                                (<p className={styles.partyInfoSuggestNewCocktailText}>Пока никто не сделал выбор</p>)
+                                (<p onTouchStart={(e) => e.currentTarget.classList.add(styles.active)} onTouchEnd={(e) => e.currentTarget.classList.remove(styles.active)} className={styles.partyInfoConfirmedShowOthersPeopleText} className={`${styles.partyInfoSuggestNewCocktailText} ${styles.partyInfoSuggestNewCocktailListEmptyText}`}>Пока никто не сделал выбор</p>)
                             }
                         </div>)}
                         {people.length > 2 && 

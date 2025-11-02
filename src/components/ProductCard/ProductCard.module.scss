@@ -1,7 +1,7 @@
 .productsCardBorder {
     border-radius: 13px;
     padding: 5px;
-    max-width: 274px;
+    max-width: 266px;
     box-sizing: border-box;
     box-shadow: 0px 0px 22px 1px #00000038;
     width: 100%;
@@ -18,7 +18,7 @@
 .productsCard {
     background-color: white;
     border-radius: 8px;
-    padding: 16px;
+    padding: 10px;
     // max-width: 274px;
     // box-sizing: border-box;
     // box-shadow: 0px 0px 22px 1px #00000038;
@@ -41,6 +41,8 @@
     border-radius: 0 0 8px 8px;
     transform: translateY(120%);
     z-index: 5;
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px); /* для Safari */
 }
 
 @keyframes animationOpen {
@@ -86,11 +88,18 @@
 }
 
 .productsCardListIngredientsContainer {
+    padding: 0 0 0 30px;
+}
 
+.productsCardItemIngredients {
+    list-style-type: none; 
+    display: flex;
+    align-items: flex-start;
+    margin: 10px 0;
 }
 
 .productsCardImageContainer {
-    height: 278px;
+    height: 260px;
     width: 100%;
     display: flex;
     justify-content: center;
@@ -100,7 +109,8 @@
 }
 
 .productsImage {
-    max-width: 225px;
+    // max-width: 132px;
+    max-width: 260px;
 }
 
 .productsCardNameInfoContainer {
@@ -131,4 +141,18 @@
     line-height: 40px;
     margin-top: 21px;
     margin-bottom: 0;
+}
+
+
+
+// media start 
+
+@media (max-width: 900px) {
+    .productsCardBorder {
+        max-width: 100%;
+    }
+    
+    .productsCardImageContainer {
+        max-width: 230px;
+    }
 }

@@ -3,12 +3,28 @@
     padding-bottom: 30px;
 }
 
+.waveContainer {
+    width: 100%;
+    position: relative;
+}
+
 .wave {
     width: 100%;
+    margin-top: -5px;
+}
+
+.rozmarinDecor {
+  position: absolute;
+  right: 200px;       /* строго слева */
+  top: 62%;        /* прижать к верху */
+  transform: translateY(-50%);
+  max-width: 150px;  /* задай нужный размер апельсина */
+  height: auto;
+  pointer-events: none; /* чтобы не мешал кликам */
 }
 
 .productsContentContainer {
-    height: 757px; // !
+    min-height: 757px; // !
     margin-top: -13px;
     background-color: #e8f7f2;
     width: 100%;
@@ -134,14 +150,163 @@
 
 // 
 
-.productsContent {
+.productsEmptyListTextContainer {
+    height: 484px;
     display: flex;
-    justify-content: space-between;
+    align-items: center;
+    justify-content: center;
+
+    p {
+        font-size: 20px;
+        font-weight: bold;
+        // color: rgb(91, 145, 87);
+        color: #427d53;
+        font-family: "Open Sans", sans-serif;
+        margin: 0;
+    }
+}
+
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.productsContent {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* ровно 3 колонки */
+  gap: 49px;
+}
+
+.fadeIn > * {
+  animation: fadeIn .65s ease;
 }
 
 .productsContentButtonContainer {
-    margin-top: 70px;
+    margin-top: 57px;
     width: 100%;
     display: flex;
     justify-content: center;
+}
+
+
+
+// media start 
+
+@media (max-width: 1300px) {
+    .rozmarinDecor {
+        right: 100px;
+    }
+}
+
+@media (max-width: 1150px) {
+    .rozmarinDecor {
+        right: 35px;
+        top: 53%;
+    }
+}
+
+@media (max-width: 992px) {
+    .rozmarinDecor {
+        max-width: 120px;
+        
+    }
+
+    .productsTitleCategoryContainer {
+        padding: 35px 13px;
+    }
+
+    .productsCategoryListContainer {
+        right: 13px;
+    }
+
+    .productsContent {
+        padding: 0 13px;
+        gap: 36px;
+    }
+}
+
+@media (max-width: 900px) {
+    .productsContentContainer {
+        // min-height: 1310px;
+        // min-height: 780px;
+        min-height: 757px;
+    }
+
+    .productsContent {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); // 2 колонки
+        gap: 30px; // отступы между элементами
+        // padding: 0 13px;
+        // margin: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .productsTitle {
+        font-size: 26px;
+        padding-right: 50px;
+    }
+
+    .productsTitleCategoryContainer {
+        align-items: baseline;
+        padding-top: 70px;
+    }
+
+    .productsCategoryListContainer {
+        top: 117px;
+    }
+}
+
+@media (max-width: 599px) {
+    .productsContentContainer {
+        // min-height: 1840px;
+        min-height: 820px;
+    }
+
+    .productsContent {
+        display: grid;
+        grid-template-columns: repeat(1, 1fr); // 2 колонки
+        gap: 30px; 
+    }
+}
+
+@media (max-width: 568px) {
+    .rozmarinDecor {
+        max-width: 100px;
+        right: 30px;
+        top: 50%;
+    }
+}
+
+
+@media (max-width: 480px) {
+    .rozmarinDecor {
+        top: 50%;
+    }
+}
+@media (max-width: 400px) {
+    .rozmarinDecor {
+        max-width: 85px;
+        right: 10px;
+    }
+}
+
+@media (max-width: 370px) {
+    .productsCategoryListContainer {
+        top: 118px;
+    }
+
+    .productsTitleCategoryContainer {
+        align-items: stretch;
+    }
+
+    .productsCategoryContainer {
+        margin-top: 5px;
+    }
+
+    .productsTitle {
+        font-size: 20px;
+        padding-right: 35px;
+    }
 }

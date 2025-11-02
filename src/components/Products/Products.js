@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { db } from '../../firebase';
 import { collection, addDoc, getDocs, doc } from 'firebase/firestore';
@@ -7,7 +8,10 @@ import styles from './Products.module.scss';
 
 import Wrapper from '../Wrapper/Wrapper';
 
-import waveImage from '../../image/wave.png';
+import waveImage from '../../image/waveOneEmpty.png';
+import rozmarinDecor from '../../image/rozmarin-decoration.png';
+
+
 import ProductsCard from '../ProductCard/ProductCard';
 
 import Button from '@mui/material/Button';
@@ -17,9 +21,9 @@ import Skeleton from '@mui/material/Skeleton';
 
 
 
-const Products = ({event, sectionRef, selectedProducts, onAddProduct, onRemoveProduct}) => {
+const Products = ({id, cocktails, event, sectionRef, selectedProducts, onAddProduct, onRemoveProduct}) => {
 
-    const [cocktails, setCocktails] = useState([]);
+    const navigate = useNavigate();
 
 
     const categoriesList = [
@@ -32,7 +36,33 @@ const Products = ({event, sectionRef, selectedProducts, onAddProduct, onRemovePr
 
 // 
 
-    const arrayElementsSkeleton = [0, 1, 2];
+    const [isWide, setIsWide] = useState(window.innerWidth > 900 || window.innerWidth < 600);
+
+    useEffect(() => {
+        const mediaLarge = window.matchMedia("(min-width: 901px)");
+        const mediaSmall = window.matchMedia("(max-width: 599px)");
+
+        const update = () => {
+            setIsWide(mediaLarge.matches || mediaSmall.matches);
+        };
+
+        // инициализация
+        update();
+
+        // подписки
+        mediaLarge.addEventListener("change", update);
+        mediaSmall.addEventListener("change", update);
+
+        return () => {
+            mediaLarge.removeEventListener("change", update);
+            mediaSmall.removeEventListener("change", update);
+        };
+    }, []);
+
+
+    const quantityItemInArray = isWide ? 3 : 4;
+
+    const arrayElementsSkeleton = [...Array(quantityItemInArray).keys()];
 
 
 // 
@@ -88,32 +118,51 @@ const Products = ({event, sectionRef, selectedProducts, onAddProduct, onRemovePr
         };
     }, []);
 
+    // useEffect(() => {
+    //     const fetchCocktails = async () => {
+    //         try {
+    //             const snapshot = await getDocs(collection(db, 'cocktails'));
+    //             const data = snapshot.docs.map(doc => ({
+    //                 id: doc.id,
+    //                 ...doc.data(),
+    //             }));
+    //             setCocktails(data);
+    //         } catch (error) {
+    //             alert('Ошибка при загрузке коктейлей:', error);
+    //         } finally {
+    //             setLoading(false);
+    //         }
+    //     }; 
+
+    //     fetchCocktails();
+    // }, []);
+
+
+    const [mountedOnce, setMountedOnce] = useState(true);
+
     useEffect(() => {
-        const fetchCocktails = async () => {
-            try {
-                const snapshot = await getDocs(collection(db, 'cocktails'));
-                const data = snapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data(),
-                }));
-                setCocktails(data);
-            } catch (error) {
-                alert('Ошибка при загрузке коктейлей:', error);
-            }
-        }; 
+        let timer;
 
-        fetchCocktails();
+        if(event) {
+            timer = setTimeout(() => {
+                setMountedOnce(false);
+            }, 700);
+        }
+        
+        return () => clearTimeout(timer);
     }, []);
-
 
 
     return (
         <div className={styles.products} ref={sectionRef}>
-            <img src={waveImage} alt='' className={styles.wave} />
+            <div className={styles.waveContainer}>
+                <img src={waveImage} alt='' className={styles.wave} />
+                <img src={rozmarinDecor} alt=" " className={styles.rozmarinDecor} />
+            </div>
             <div className={styles.productsContentContainer}>
                 <Wrapper>
                     <div className={styles.productsTitleCategoryContainer}>
-                        <h1 className={styles.productsTitle}>Выбирай напиток</h1>
+                        <h1 id={id} className={styles.productsTitle}>Выбирай напиток</h1>
                         <div ref={categoryRef} className={styles.productsCategoryWrapper}>
                             <div
                                 onClick={(e) => clickCategory(e)}
@@ -152,26 +201,40 @@ const Products = ({event, sectionRef, selectedProducts, onAddProduct, onRemovePr
                         </div>
                     </div>
                     <div className={styles.products}>
-                        {!event ?
-                        (<div className={styles.productsContent}>
-                            {arrayElementsSkeleton.map((s, index) => (
-                                <Skeleton 
-                                    key={index}
-                                    variant="rectangular"
-                                    width={274}
-                                    height={484}
-                                    sx={{borderRadius: '13px', animationDuration: '1.25s', margin: index === 0 || index === arrayElementsSkeleton.length - 1 ? '0' : '0 10px', bgcolor: 'rgb(0 0 0 / 8%)'}}
-                                    animation="pulse"
-                                />
-                            ))}
-                        </div>) :
-                        (<div className={styles.productsContent}>
-                            {sortingCocktails.map((cocktail, index) => (
-                                <ProductsCard hide={true} index={index} key={cocktail.id} id={cocktail.id} name={cocktail.name} image={cocktail.imageUrl} ingredients={cocktail.ingredients} type={cocktail.type} event={event} selectedProducts={selectedProducts} onAddProduct={onAddProduct} onRemoveProduct={onRemoveProduct} />
-                            ))}
-                        </div>)}
+                        {!event ? 
+                            //!mounted || loading ?
+                            (<div className={styles.productsContent}>
+                                {arrayElementsSkeleton.map((s, index) => (
+                                    <Skeleton 
+                                        key={index}
+                                        variant="rectangular"
+                                        height={484}
+                                        sx={{borderRadius: '13px',
+                                            flex: '0 0 calc((100% - 2 * 36px) / 3)', // 👈 фиксированная ширина
+                                            boxSizing: 'border-box',
+                                            animationDuration: '1.25s',
+                                            bgcolor: 'rgb(0 0 0 / 8%)',
+                                        }}
+                                        animation="pulse"
+                                    />
+                                ))}
+                            </div>) :
+                            (<div>
+                                {sortingCocktails.length === 0 ?
+                                    (<div className={styles.productsEmptyListTextContainer}>
+                                        <p>Список пуст</p>
+                                    </div>)
+                                    : 
+                                    (<div className={`${styles.productsContent} ${mountedOnce ? styles.fadeIn : ''}`}>
+                                        {sortingCocktails.map((cocktail, index) => (
+                                            <ProductsCard hide={true} index={index} key={`${cocktail.id}-${category}`} id={cocktail.id} name={cocktail.name} image={cocktail.imageUrl} ingredients={cocktail.ingredients} type={cocktail.type} event={event} selectedProducts={selectedProducts} onAddProduct={onAddProduct} onRemoveProduct={onRemoveProduct} />
+                                        ))}
+                                    </div>)
+                                }
+                            </div>)
+                        }
                         <div className={styles.productsContentButtonContainer}>
-                            <Button disabled={!event} sx={{width: '170px', borderRadius: '21px', backgroundColor: '#8ac640', textTransform: 'capitalize', fontSize: '16px', boxShadow: 'none',}} variant="contained">{event ? 'Показать больше' : 'Загрузка...'}</Button>
+                            <Button onClick={() => navigate('/cocktails')} disabled={!event} sx={{width: '170px', borderRadius: '21px', backgroundColor: '#8ac640', textTransform: "none", whiteSpace: "nowrap", fontSize: '16px', boxShadow: 'none', '@media (max-width: 768px)': {marginBottom: '35px'}, }} variant="contained">{event ? 'Показать больше' : 'Загрузка...'}</Button>
                         </div>
                     </div>
                 </Wrapper>

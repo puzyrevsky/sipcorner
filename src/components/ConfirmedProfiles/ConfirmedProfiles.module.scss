@@ -81,3 +81,16 @@
     border: 3px dashed #e8f7f2;
     transition: background-color 0.35s ease, border-color 0.8s ease;
 }
+
+
+
+// media start
+
+@media (max-width: 630px) {
+    .confirmedProfiles {
+        box-sizing: border-box;
+        max-width: 604px;
+        width: 100%;
+        min-width: 280px;
+    }
+}

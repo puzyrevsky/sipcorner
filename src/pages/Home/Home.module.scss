@@ -3,7 +3,9 @@
 }
 
 .homeAlertContainer {
+    max-width: 895px;
     width: 100%;
+    margin: 0 auto;
     display: flex;
     align-items: center;
     position: fixed; 
@@ -42,4 +44,21 @@
     justify-content: center;
     animation: pulse 2.1s infinite ease-in-out;
     cursor: pointer;
+    z-index: 1500;
+}
+
+
+
+// media start
+
+@media (max-width: 992px) {
+    .homeBasketContainer {
+        right: 20px;
+        bottom: 30px;
+    }
+
+    .homeAlertContainer {
+        padding: 0 13px;
+        box-sizing: border-box;
+    }
 }

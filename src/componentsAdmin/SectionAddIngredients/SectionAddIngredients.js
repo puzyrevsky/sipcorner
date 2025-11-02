@@ -16,7 +16,11 @@ const SectionAddIngredients = () => {
     const [textInput, setTextInput] = useState('');
 
     const handleTextInput = (e) => {
-        setTextInput(e.target.value);
+        let value = e.target.value;
+        if (value.length === 1) {
+            value = value.charAt(0).toUpperCase();
+        }
+        setTextInput(value);
     }
 
 // 
@@ -80,7 +84,7 @@ const handleButtonDelete = async (id) => {
                 ))}
             </div>
             <div className={styles.sectionAddIngredientsFormContainer}>
-                <TextField value={textInput} onChange={(e) => handleTextInput(e)} sx={{marginBottom: '13px'}} id="outlined-basic" label="Название ингредиента" variant="outlined" />
+                <TextField value={textInput} onChange={(e) => handleTextInput(e)} sx={{marginBottom: '13px'}} id="outlined-basic" label="Название ингредиента" variant="outlined" inputProps={{ autoCapitalize: "none" }} />
                 <Button onClick={handleButtonAdd} variant="contained">Добавить ингредиент</Button>
             </div>
         </div>

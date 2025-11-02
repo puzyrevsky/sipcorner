@@ -1,5 +1,12 @@
+.instructionsSection {
+    background-color: white;
+    width: 100%;
+    margin-top: -3px;
+}
+
 .instructions {
-    margin: 90px 0 90px 0;
+    padding: 90px 0 90px 0;
+    background-color: white;
 }
 
 .instructionsContent {
@@ -31,4 +38,62 @@
     line-height: 50px;
     font-family: "Open Sans", sans-serif;
     font-weight: 500;
+}
+
+
+
+// media start
+
+@media (max-width: 940px) {
+
+    .instructions {
+        padding: 45px 0 90px 0;
+    }
+
+    .instructionsContent {
+        padding: 0 15px;
+        justify-content: space-around;
+    }
+
+    .instructionsPhoto {
+        max-width: 325px;
+    }
+}
+
+@media (max-width: 768px) {
+
+    .instructions {
+        padding: 0px 0 90px 0;
+    }
+
+    .instructionsContent {
+        flex-direction: column;
+    }
+
+    .instructionsTitle {
+        margin-top: 45px;
+        margin-bottom: 0;
+        text-align: center;
+        font-size: 26px;
+    }
+
+    .instructionsItem {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 370px) {
+    .instructionsPhoto {
+        max-width: 290px;
+    }
+}
+
+@media (max-width: 370px) {
+    .instructionsTitle {
+        font-size: 20px;
+    }  
+    
+    .instructionsItem {
+        line-height: 36px;
+    }
 }

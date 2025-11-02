@@ -8,6 +8,7 @@ import {
   limit,
   onSnapshot,
   doc,
+  getDocs,
   writeBatch,
   serverTimestamp,
 } from 'firebase/firestore';
@@ -21,10 +22,35 @@ import PrivateRoute from './components/PrivateRoute/PrivateRoute';
 import AdminPage from './pages/AdminPage/AdminPage';
 import Basket from './pages/Basket/Basket';
 import Catalog from './pages/Catalog/Catalog';
+import UserDrinks from './pages/UserDrinks/UserDrinks';
+import NotFound from "./pages/NotFound/NotFound";
 
 const FIVE_MIN = 5 * 60 * 1000;
 
 function App() {
+
+const [cocktails, setCocktails] = useState([]);
+
+useEffect(() => {
+        const fetchCocktails = async () => {
+            try {
+                const snapshot = await getDocs(collection(db, 'cocktails'));
+                const data = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data(),
+                }));
+                setCocktails(data);
+            } catch (error) {
+                alert('Ошибка при загрузке коктейлей:', error);
+            } finally {
+                // setLoading(false);
+            }
+        }; 
+
+        fetchCocktails();
+    }, []);
+
+// 
 
   const [event, setEvent] = useState(null);
 
@@ -146,6 +172,7 @@ function App() {
 
   const removeProduct = (id) => {
     setSelectedProducts(selectedProducts.filter(p => p !== id));
+    
   }
 
   const clearProducts = () => {
@@ -171,7 +198,30 @@ function App() {
   }, []);
 
 
-// 
+  // 
+
+  useEffect(() => {
+    if(!loadingEvent) {
+      if(!event || Object.keys(event).length === 0) {
+        localStorage.removeItem('selectCocktail');
+        setSelectedProducts([]);
+      }
+    }
+  }, [loadingEvent, event]);
+
+
+  // 
+
+  const replaceProducts = (ids) => {
+    if (Array.isArray(ids)) {
+      setSelectedProducts(ids);
+    } else {
+      setSelectedProducts([]);
+    }
+  };
+
+
+  // 
 
   const [showSuccessfulNotification, setShowSuccessfulNotification] = useState(false);
 
@@ -197,16 +247,15 @@ function App() {
  
   return (
     <div className="App">
-      <Router>
         <Routes>
-          <Route path='/' element={<Home event={event} loadingEvent={loadingEvent} isProductInListSelected={isProductInListSelected} selectedProducts={selectedProducts} onAddProduct={addProduct} onRemoveProduct={removeProduct} showSuccessfulNotification={showSuccessfulNotification} onSwitchSuccessfulNotification={switchSuccessfulNotification} />} />
-          <Route path='/cocktails' element={<Catalog event={event} selectedProducts={selectedProducts} onAddProduct={addProduct} onRemoveProduct={removeProduct} />} />
-          <Route path='/basket' element={<Basket selectedProducts={selectedProducts} onClearProducts={clearProducts} onRemoveProduct={removeProduct} onSwitchSuccessfulNotification={switchSuccessfulNotification} />} />
+          <Route path='/' element={<Home cocktails={cocktails} event={event} loadingEvent={loadingEvent} isProductInListSelected={isProductInListSelected} selectedProducts={selectedProducts} onAddProduct={addProduct} onRemoveProduct={removeProduct} showSuccessfulNotification={showSuccessfulNotification} onSwitchSuccessfulNotification={switchSuccessfulNotification} />} />
+          <Route path='/cocktails' element={<Catalog cocktails={cocktails} event={event} isProductInListSelected={isProductInListSelected} selectedProducts={selectedProducts} onAddProduct={addProduct} onRemoveProduct={removeProduct} />} />
+          <Route path='/drinks/:idPerson/:idCocktail' element={<UserDrinks />} />
+          <Route path='/basket' element={<Basket selectedProducts={selectedProducts} onClearProducts={clearProducts} onRemoveProduct={removeProduct} onSwitchSuccessfulNotification={switchSuccessfulNotification} onReplaceProducts={replaceProducts} />} />
           <Route path='/login' element={<LoginPage />} />
           <Route path='/admin' element={<PrivateRoute><AdminPage event={event} /></PrivateRoute>} />
-          <Route />
+          <Route path="*" element={<NotFound />} />
         </Routes>
-      </Router>
     </div>
   );
 }

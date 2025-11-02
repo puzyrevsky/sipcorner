@@ -1,18 +1,86 @@
-.basket {
-    min-height: 100vh;
+// .basket {
+//     min-height: 100vh;
 
-    background: 
-        linear-gradient(135deg, #d0f4f9 0%, #b9e0d9 100%),
-        url('../../image/backgroundBasket.png') repeat;
-    background-size: auto;
-    background-blend-mode: multiply;
-    background-attachment: fixed; /* фиксируем фон */
+//     background: 
+//         linear-gradient(135deg, #d0f4f9 0%, #b9e0d9 100%),
+//         url('../../image/backgroundBasket.png') repeat;
+//     background-size: auto;
+//     background-blend-mode: multiply;
+//     background-attachment: fixed; /* фиксируем фон */
+// }
+
+
+// .basket {
+//   position: relative;
+//   min-height: calc(var(--vh) * 100);
+//   padding: 12px;
+//   z-index: 0; // чтобы контент был выше фона
+// }
+
+.basket {
+  position: relative;
+  min-height: 100dvh;
+  padding: 12px;
+  z-index: 0;
+  box-sizing: border-box;
 }
+
+.basketPasswordContainer {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(135deg, #d0f4f9 0%, #b9e0d9 100%);
+    z-index: 5000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 13px;
+
+    .basketPasswordTitle {
+        text-align: center;
+        padding: 0 13px;
+        margin: 0 0 30px 0;
+        color: rgb(70, 134, 77);
+        font-weight: bold;
+        font-family: "Open Sans", sans-serif;
+    }
+}
+
+.basketPasswordContentContainer {
+    height: 350px;
+    display: flex;
+    flex-direction: column;
+    // justify-content: center;
+    align-items: center;
+}
+
+.basketPasswordScreensaverContainer {
+    margin-bottom: 70px;
+    width: 150px;
+    height: 150px;
+}
+
+.basketPasswordScreensaver {
+    width: 100%;
+}
+
+.wrapperBasket {
+    max-width: 895px;
+    margin: 0 auto;
+}
+
+// .basketBg::after {
+//   content: "";
+//   position: absolute;
+//   inset: 0;
+//   background: url('../../image/backgroundBasket.png') center center no-repeat;
+//   background-size: cover; /* cover уже работает стабильно в object-fit-сценарии */
+//   z-index: -1;
+// }
 
 .basketSectionTitle {
     margin: 0 0 30px 0;
     padding-top: 20px;
-
+    max-width: 500px;
     font-size: 26px;
     font-weight: bold;
     background: linear-gradient(90deg, #5ca55d, #234e47);
@@ -24,11 +92,31 @@
 }
 
 .basketInputNameContainer {
-    margin-bottom: 20px;
+    margin-bottom: 13px;
+}
+
+.basketInputPhoneContainer {
+    height: 101px;
+    display: flex;
+    flex-direction: column;
+
+    span {
+        margin-top: 5px;
+        font-size: 13px;
+        color: #656e6e;
+    }
 }
 
 .basketGenderText {
-    margin: 0 0 10px 0;
+    margin: 20px 0 10px 0;
+}
+
+.basketSelectedCoctailsTitle {
+    margin: 38px 0 16px 0;
+    font-size: 20px;
+    font-weight: bold;
+    font-family: "Open Sans", sans-serif;
+    color: rgb(70, 134, 77);
 }
 
 .basketCardSelectedCocktail {
@@ -47,26 +135,28 @@
 }
 
 .basketImageSelectedCocktailContainer {
-    background-color: #ffffff;
-    display: flex;
     align-items: center;
-    justify-content: center; 
-    max-width: 100px;
+    background-color: #fff;
+    box-shadow: 0 0 25px 30px #fff;
+    display: flex;
+    justify-content: center;
     margin-right: 30px;
-    box-shadow: 0 0 25px 30px rgb(255 255 255);
+    max-width: 105px;
+    width: 100%;
     padding: 10px 0 10px 13px;
 }
 
 .basketImageSelectedCocktail {
-    max-width: 100px;
-    max-height: 120px;
-    background-color: #ffffff;
+    background-color: #fff;
+    max-height: 130px;
+    max-width: 130px;
     // border-radius: 18px;
     
     // box-shadow: 0 0 35px 18px rgba(124, 124, 124, 0.258);
 }
 
 .basketCardSelectedCocktailInfoContainer {
+    max-width: 140px;
     margin: 7px 0;
 
     .basketCardSelectedCocktailTitle {
@@ -97,3 +187,37 @@
     }
 }
 
+.basketButtonGroupContainer {
+    max-width: 310px;
+    width: 100%;
+    display: flex;
+    margin-bottom: 13px;
+}
+
+.basketButtonGroupSaveDeleteContainer {
+    max-width: 310px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+// media start
+
+@media (max-width: 992px) {
+    .wrapperBasket {
+        max-width: 335px;
+        margin: 0 auto;
+    }
+}
+
+@media (max-height: 460px) {
+    .basketPasswordScreensaverContainer {
+        margin-bottom: 30px;
+        width: 100px;
+        height: 100px;
+    }
+
+    .basketPasswordContentContainer {
+        height: 260px;
+    }
+}

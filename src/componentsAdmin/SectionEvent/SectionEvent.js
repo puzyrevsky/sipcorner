@@ -26,7 +26,7 @@ const SectionEvent = () => {
     const [date, setDate] = useState('');
     const [time, setTime] = useState('');
     // const TWO_HOURS_MS = 2 * 60 * 60 * 1000;
-    const TWO_HOURS_MS = 10000;
+    const SIX_HOURS_MS = 6 * 60 * 60 * 1000;
 
 
     const handleSave = async () => {
@@ -34,7 +34,7 @@ const SectionEvent = () => {
         if(!date || !time) return;
 
         const dateTime = new Date(`${date}T${time}:00`);
-        const timeStampDeleteToHistory = dateTime.getTime() + TWO_HOURS_MS;
+        const timeStampDeleteToHistory = dateTime.getTime() + SIX_HOURS_MS;
 
         try {
             const payload = {

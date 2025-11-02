@@ -14,6 +14,8 @@ import CloseIcon from '@mui/icons-material/Close';
 import Button from '@mui/material/Button';
 import LocalBarIcon from '@mui/icons-material/LocalBar';
 import DoNotDisturbOnIcon from '@mui/icons-material/DoNotDisturbOn';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 
 
 
@@ -65,9 +67,9 @@ const ProductsCard = ({hide, index, id, type, name, image, ingredients, event, s
 
     const ingredientsQuantity = ingredients.length;
 
-    const count = listIngredients.filter((i) => ingredients.includes(i.name)).length;
+    const count = listIngredients.filter((i) => ingredients.some((ing) => ing.name === i.name)).length;
 
-    const missing = ingredients.filter((name) => !listIngredients.some((i) => i.name === name));
+    const missing = ingredients.filter((ing) => !listIngredients.some((i) => i.name === ing.name));
 
 
     const listBorderColor = {
@@ -111,9 +113,43 @@ const ProductsCard = ({hide, index, id, type, name, image, ingredients, event, s
     };
 
     
+// 
+
+    const [isWide, setIsWide] = useState(window.innerWidth > 900 || window.innerWidth < 600);
+
+    useEffect(() => {
+    const mediaLarge = window.matchMedia("(min-width: 901px)");
+    const mediaSmall = window.matchMedia("(max-width: 599px)");
+
+    const update = () => {
+        setIsWide(mediaLarge.matches || mediaSmall.matches);
+    };
+
+    // инициализация
+    update();
+
+    // подписки
+    mediaLarge.addEventListener("change", update);
+    mediaSmall.addEventListener("change", update);
+
+    return () => {
+        mediaLarge.removeEventListener("change", update);
+        mediaSmall.removeEventListener("change", update);
+    };
+    }, []);
+
+
+    const quantityShownCards = isWide ? 3 : 4;
+
+    const isHidden = hide && index >= quantityShownCards;
+
+
+    // 
+
+
 
     return (
-        <div className={styles.productsCardBorder} style={{border: borderColor, display: index > 2 && hide ? 'none' : ''}}>
+        <div className={styles.productsCardBorder} style={{border: borderColor, display: isHidden ? "none" : ""}}>
                 <div className={styles.productsCard}>
                     <div className={`${styles.productsCardInfoContentContainer} 
                         ${isOpenMenuDescription === 'open' ? styles.productsCardInfoContentContainer__animationOpen : ''} 
@@ -123,9 +159,12 @@ const ProductsCard = ({hide, index, id, type, name, image, ingredients, event, s
                             {isOpenMenuDescription === 'open' && <CloseIcon onClick={closeDescription} sx={{cursor: 'pointer', position: 'absolute', top: '10px', right: '10px', color: 'black'}} />}
                             <p className={styles.productsCardListIngredientsTitle}>Состав:</p>
                             <ul className={styles.productsCardListIngredientsContainer}>
-                                {ingredients.map((ingredient, index) => (
-                                    <li style={{color: missing.includes(ingredient) ? 'rgb(255, 0, 0)' : 'rgb(0, 0, 0)'}} key={index}>{ingredient}</li>
-                                ))}
+                                {ingredients.map((ingredient, index) => {
+                                    const isMissing = missing.some(m => m.name === ingredient.name);
+                                    return (
+                                        <li className={styles.productsCardItemIngredients} style={{color: isMissing ? 'rgb(99, 99, 99)' : 'rgb(0, 0, 0)'}} key={index}>{isMissing ? <HighlightOffIcon sx={{fontSize: '22px', color: 'red', marginRight: '7px'}} /> : <CheckCircleOutlineIcon sx={{fontSize: '22px', color: 'green', marginRight: '7px'}} />}{ingredient.name}</li>
+                                    )
+                                })}
                             </ul>
                         </div>
                     </div>
@@ -136,7 +175,7 @@ const ProductsCard = ({hide, index, id, type, name, image, ingredients, event, s
                     </div>
                     <div className={styles.productsCardNameInfoContainer}>
                         <h3 className={styles.productsCardName}>{name}</h3>
-                        {(isOpenMenuDescription === null || isOpenMenuDescription === 'close') && (<div style={{marginTop: '1px'}}><InfoOutlineIcon onClick={openDescription} sx={{cursor: 'pointer'}} /></div>)}
+                        {(isOpenMenuDescription === null || isOpenMenuDescription === 'close') && (<div style={{marginTop: '1px', marginLeft: '10px'}}><InfoOutlineIcon onClick={openDescription} sx={{cursor: 'pointer'}} /></div>)}
                     </div>
                     <p className={styles.productsCardTypeText}>{type}</p>
                     {event?.date ? (<Button onClick={toggleSelect} sx={{ textTransform: 'capitalize', fontSize: '16px', width: '100%', marginTop: '21px', backgroundColor: '#2a7c6e'}} variant="contained" endIcon={!isSelected ? (<LocalBarIcon sx={{ width: 20, height: 20 }} />) : (<DoNotDisturbOnIcon sx={{ width: 20, height: 20 }} />)}>{!isSelected ? 'Выбрать' : 'Отменить'}</Button>) : (<p className={styles.productsCardNotEventText}>Ближайших событий нет</p>)}

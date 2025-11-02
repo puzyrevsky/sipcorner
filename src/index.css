@@ -1,3 +1,6 @@
+html {
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -5,7 +8,55 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
+
+
+body.basket-background::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+
+  background:
+    linear-gradient(135deg, #d0f4f9 0%, #b9e0d9 100%),
+    url('./image/backgroundLittleBasket.png'); /* маленький паттерн */
+    background-repeat: repeat;         /* фон повторяется */
+    background-size: auto, 300px 300px;  /* можно настроить плотность паттерна */
+    background-blend-mode: multiply;
+
+  z-index: -1;
+}
+
+body.userdrinks-background::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: #2a7c6e;
+  z-index: -1;
+}
+
+body.home-background::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: #2a7c6e;
+  min-height: 100vh;
+  z-index: -1;
+}
+
+body.catalog-background::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: #e8f7f2;;
+  z-index: -1;
+}
+
+
+
+/*  */
+
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',

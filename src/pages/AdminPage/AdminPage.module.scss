@@ -2,14 +2,21 @@
     text-align: center;
     margin: 0 0 50px 0;
     user-select: none;
+    // overflow-x: hidden;
 }
 
 .adminPageTitleText {
     user-select: none;
 }
 
+.adminPageSectionCocktailsContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+}
+
 .adminPageCardCocktail {
-    max-width: 238px;
+    max-width: 260px;
     width: 100%;
     box-shadow: 0px 0px 18px 1px rgba(146, 146, 146, 0.741);
     border-radius: 13px;
@@ -36,6 +43,17 @@
     .adminPageCardCocktailListIngredients {
         padding: 0px 18px 0px 18px;
         margin: 0;
+    }
+
+    .adminPageDeleteButtonContainer {
+        width: 100%;
+        display: flex;
+        justify-content: end;
+        margin-top: 13px;
+    }
+
+    .adminPageCardCocktailQuantityIngredient {
+        font-weight: 500;
     }
 }
 

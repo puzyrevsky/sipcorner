@@ -1,0 +1,310 @@
+.userDrinks {
+    display: flex;
+    align-items: center;
+    background-color: #2a7c6e;
+    width: 100%;
+    // height: 100vh; // 90vh
+    height: calc(var(--vh) * 100);
+    overflow: hidden;
+    // padding: 17px 0; // 0px
+    position: relative;
+    user-select: none;
+}
+
+// 
+
+.userDrinksInactiveStoryInfoPerson {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    .userDrinksInactiveStoryAvatar {
+        max-width: 50px;
+        border-radius: 50%;
+        background-color: white;
+        padding: 5px;
+    }
+
+    p {
+        font-size: 14px;
+        color: white;
+        margin: 5px 0 0 0;
+        font-family: "Open Sans", sans-serif;
+    }
+}
+
+.userDrinksPreviousStoryContainer {
+    overflow: hidden;
+    background-color: #256f62;
+    border-radius: 13px;
+    position: absolute;
+    left: 180px;
+    max-width: 200px;
+}
+
+.userDrinksPreviousStoryBlurred {
+    padding-top: 25px;
+    filter: blur(5px);
+    
+    img {
+        display: block;    // убирает зазор снизу
+        width: 100%;       // чтобы картинка заполняла весь блок
+        height: auto;
+        border-radius: 0 0 13px 13px;
+    }
+
+    &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background: rgba(0, 0, 0, 0.4); // 0.4 = прозрачность
+        border-radius: inherit; // повторяем радиус родителя
+        pointer-events: none; // чтобы overlay не мешал кликам
+    }
+}
+
+.userDrinksNextStoryContainer {
+    overflow: hidden;
+    background-color: #256f62;
+    border-radius: 13px;
+    position: absolute;
+    right: 180px;
+    max-width: 200px;
+}
+
+.userDrinksNextStoryBlurred {
+    padding-top: 25px;
+    filter: blur(5px);
+
+    img {
+        display: block;    // убирает зазор снизу
+        width: 100%;       // чтобы картинка заполняла весь блок
+        height: auto;
+        border-radius: 0 0 13px 13px;
+    }
+
+    &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background: rgba(0, 0, 0, 0.4); // 0.4 = прозрачность
+        border-radius: inherit; // повторяем радиус родителя
+        pointer-events: none; // чтобы overlay не мешал кликам
+    }
+}
+
+.userDrinksHistoryContainer {
+    // padding-top: 10px;
+    margin: 0 auto;
+    max-width: 450px;
+    position: relative;
+}
+
+// 
+
+.userDrinksButtonTransition__back {
+    position: absolute;
+    top: -1000px;
+    bottom: -1000px;
+    width: 48px;
+    z-index: 2000;
+    left: -58px;
+    display: flex;
+    align-items: center;
+    transition: .45s;
+    cursor: pointer;
+    justify-content: center;
+}
+
+.userDrinksButtonTransition__back:hover .userDrinksButtonTransitionToOtherHistory {
+    background-color: rgb(142, 142, 142);
+    transition: .45s;
+}   
+
+.userDrinksButtonTransition__next {
+    position: absolute;
+    top: -1000px;
+    bottom: -1000px;
+    width: 48px;
+    z-index: 2000;
+    right: -58px;
+    display: flex;
+    align-items: center;
+    transition: .45s;
+    cursor: pointer;
+    justify-content: center;
+}
+
+.userDrinksButtonTransition__next:hover .userDrinksButtonTransitionToOtherHistory {
+    background-color: rgb(142, 142, 142);
+    transition: .45s;
+}
+
+// 
+
+.userDrinksButtonTransitionToOtherHistory {
+    background-color: rgba(142, 142, 142, 0.362);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: .45s;
+}
+
+.userDrinksHistoryNamePersonContainer {
+    border-radius: 13px 13px 0 0;
+    box-sizing: border-box;
+    background-color: #256f62;
+    margin: 0 0 3px 0;
+    padding: 10px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+}
+
+.userDrinksHistoryNamePersonAvatarContainer {
+    display: flex;
+    align-items: center;
+}
+
+.userDrinksHistoryNamePersonAvatar {
+    max-width: 30px;
+    background-color: white;
+    border-radius: 50%;
+    padding: 3px;
+    margin-right: 13px;
+}
+
+.userDrinksHistoryNamePersonText {
+    margin: 0;
+    color: white;
+    font-family: "Open Sans", sans-serif;
+}
+
+.userDrinksHistoryButtonContainer {
+    display: flex;
+    align-items: center;
+}
+
+.userDrinksHistoryProgressContainer {
+  display: flex;
+  position: absolute;
+  right: 0;
+  left: 0;
+  bottom: 0;
+//   padding: 0 8px 4px; // чтобы не прилипало к краям
+//   gap: 4px; // расстояние между линиями
+}
+
+
+
+// media start
+
+@media (max-width: 1350px) {
+    .userDrinksPreviousStoryContainer {
+        left: 45px;
+    }
+
+    .userDrinksNextStoryContainer {
+        right: 45px;
+    }
+}
+
+@media (max-width: 1110px) {
+    .userDrinksPreviousStoryContainer {
+        left: 13px;
+    }
+
+    .userDrinksNextStoryContainer {
+        right: 13px;
+    }
+}
+
+@media (max-width: 1000px) {
+    .userDrinksPreviousStoryContainer {
+        left: -50px;
+    }
+
+    .userDrinksNextStoryContainer {
+        right: -50px;
+    }
+}
+
+@media (max-width: 870px) {
+    .userDrinksPreviousStoryContainer {
+        left: -100px;
+    }
+
+    .userDrinksNextStoryContainer {
+        right: -100px;
+    }
+}
+
+@media (max-width: 768px) {
+    .userDrinksPreviousStoryContainer {
+        display: none;
+    }
+
+    .userDrinksNextStoryContainer {
+        display: none;
+    }
+}
+
+@media (max-width: 576px) {
+    .userDrinksButtonTransition__back {
+        display: none;
+    }
+
+    .userDrinksButtonTransition__next {
+        display: none;
+    }
+}
+
+@media (max-width: 490px) {
+    .userDrinksHistoryContainer {
+        margin: 0 auto;
+        max-width: 450px;
+        position: relative;
+        padding: 0 12px; // ⬅️ внутренние отступы слева/справа
+        box-sizing: border-box; // чтобы отступы не ломали ширину
+    }
+}
+
+
+// 
+
+
+@media (max-height: 480px) {
+    .userDrinksPreviousStoryContainer {
+        max-width: 160px;
+    }
+
+    .userDrinksNextStoryContainer {
+        max-width: 160px;
+    }
+}
+
+@media (max-height: 385px) {
+    .userDrinksHistoryNamePersonText {
+        font-size: 13px;
+    }
+}
+
+@media (max-height: 335px) {
+    .userDrinksHistoryNamePersonText {
+        font-size: 12px;
+    }
+}
