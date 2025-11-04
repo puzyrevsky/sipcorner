@@ -109,20 +109,51 @@ const Catalog = ({cocktails, event, selectedProducts, onAddProduct, onRemoveProd
 
     // 
 
+    const [listFoundItem, setListFoundItem] = useState();
+
+    const handleFoundItem = (array) => {
+        setListFoundItem(array);
+    }
+
+    const [quantityIntroducedSymbols, setQuantityIntroducedSymbols] = useState(0);
+
+    // console.log(quantityIntroducedSymbols)
+
+    const handleQuantityIntroducedSymbols = (boolean) => {
+        setQuantityIntroducedSymbols(boolean);
+    }
+
+    const [banAnimationOpenProductCard, setBanAnimationOpenProductCard] = useState(false);
+
+    const handleBanAnimationOpenProductCard = () => {
+        setBanAnimationOpenProductCard(true);
+        const timer = setTimeout(() => {
+            setBanAnimationOpenProductCard(false);
+        }, 800);
+    }
+
+
+    // 
+
     const [currentPage, setCurrentPage] = useState(1);
 
     const itemPerPage = isWide ? 9 : 8;;
 
     const totalPages = Math.ceil(sortingCocktails.length / itemPerPage);
 
-    const currentItems = sortingCocktails.slice(
+    const currentItems = quantityIntroducedSymbols ? listFoundItem.slice(
+        (currentPage - 1) * itemPerPage,
+        currentPage * itemPerPage
+    )
+    :
+    sortingCocktails.slice(
         (currentPage - 1) * itemPerPage,
         currentPage * itemPerPage
     );
 
 
     const arrayElementsSkeleton = [...Array(itemPerPage).keys()];
-
+  
 
     // 
 
@@ -227,7 +258,7 @@ const Catalog = ({cocktails, event, selectedProducts, onAddProduct, onRemoveProd
                                 }
                             </div>
                         </div>
-                        <SearchFilter currentItems={currentItems} />
+                        <SearchFilter sortingCocktails={sortingCocktails} handleFoundItem={handleFoundItem} handleQuantityIntroducedSymbols={handleQuantityIntroducedSymbols} handleBanAnimationOpenProductCard={handleBanAnimationOpenProductCard} />
                         <div className={styles.products}>
                             { !event ? 
                             //!mounted || loading ?
@@ -253,7 +284,7 @@ const Catalog = ({cocktails, event, selectedProducts, onAddProduct, onRemoveProd
                                         <p>Список пуст</p>
                                     </div>)
                                     :                            
-                                    (<div className={`${styles.productsContent} ${mountedOnce ? styles.fadeIn : ''}`}>
+                                    (<div className={`${styles.productsContent} ${mountedOnce && !banAnimationOpenProductCard ? styles.fadeIn : ''}`}>
                                         {currentItems.map((cocktail, index) => (
                                             <ProductsCard hide={false} index={index} key={`${cocktail.id}-${category}`} id={cocktail.id} name={cocktail.name} image={cocktail.imageUrl} ingredients={cocktail.ingredients} type={cocktail.type} event={event} selectedProducts={selectedProducts} onAddProduct={onAddProduct} onRemoveProduct={onRemoveProduct} />
                                         ))}

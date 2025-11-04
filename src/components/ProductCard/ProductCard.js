@@ -175,7 +175,7 @@ const ProductsCard = ({hide, index, id, type, name, image, ingredients, event, s
                     </div>
                     <div className={styles.productsCardNameInfoContainer}>
                         <h3 className={styles.productsCardName}>{name}</h3>
-                        {(isOpenMenuDescription === null || isOpenMenuDescription === 'close') && (<div style={{marginTop: '1px', marginLeft: '10px'}}><InfoOutlineIcon onClick={openDescription} sx={{cursor: 'pointer'}} /></div>)}
+                        <div style={{marginTop: '1px', marginLeft: '10px'}}>{(isOpenMenuDescription === null || isOpenMenuDescription === 'close') && (<InfoOutlineIcon onClick={openDescription} sx={{cursor: 'pointer'}} />)}</div>
                     </div>
                     <p className={styles.productsCardTypeText}>{type}</p>
                     {event?.date ? (<Button onClick={toggleSelect} sx={{ textTransform: 'capitalize', fontSize: '16px', width: '100%', marginTop: '21px', backgroundColor: '#2a7c6e'}} variant="contained" endIcon={!isSelected ? (<LocalBarIcon sx={{ width: 20, height: 20 }} />) : (<DoNotDisturbOnIcon sx={{ width: 20, height: 20 }} />)}>{!isSelected ? 'Выбрать' : 'Отменить'}</Button>) : (<p className={styles.productsCardNotEventText}>Ближайших событий нет</p>)}

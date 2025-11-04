@@ -4,13 +4,16 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 
 
-const SearchFilter = ({currentItems}) => {
+const SearchFilter = ({sortingCocktails, handleFoundItem, handleQuantityIntroducedSymbols, handleBanAnimationOpenProductCard}) => {
 
     const [searchText, setSearchText] = useState('');
 
 
     useEffect(() => {
-        console.log(currentItems.filter((i) => searchText === i.name));
+        handleQuantityIntroducedSymbols(searchText.length > 0);
+        const copyFoundItem = sortingCocktails.filter((i) => i.name.toLowerCase().includes(searchText.toLocaleLowerCase()));
+        console.log(copyFoundItem);
+        handleFoundItem(copyFoundItem);
     }, [searchText]);
 
     
@@ -23,7 +26,10 @@ const SearchFilter = ({currentItems}) => {
                 noValidate
                 autoComplete="off"
             >
-                <TextField onChange={(e) => setSearchText(e.target.value)} value={searchText} sx={{borderRadius: '13px'}} id="outlined-basic" label="Поиск" variant="outlined" />
+                <TextField onChange={(e) => {
+                    setSearchText(e.target.value);
+                    handleBanAnimationOpenProductCard();
+                }} value={searchText} sx={{borderRadius: '13px'}} id="outlined-basic" label="Поиск" variant="outlined" />
             </Box>
         </div>
     )
