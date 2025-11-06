@@ -19,7 +19,7 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 
 
 
-const ProductsCard = ({hide, index, id, type, name, image, ingredients, event, selectedProducts, onAddProduct, onRemoveProduct}) => {
+const ProductsCard = ({hide, index, id, type, name, image, ingredients, event, selectedProducts, onAddProduct, onRemoveProduct, searchText}) => {
 
     const [listIngredients, setListIngredients] = useState([]);
 
@@ -145,6 +145,22 @@ const ProductsCard = ({hide, index, id, type, name, image, ingredients, event, s
 
 
     // 
+    const safeName = typeof name === 'string' ? name : '';
+    const safeQuery = (typeof searchText === 'string' ? searchText : '').trim();
+
+    function getHighlightedParts(text, query) {
+        const src = typeof text === 'string' ? text : '';
+        const q = typeof query === 'string' ? query : '';
+        if (!q) return [{ text: src, isMatch: false }];
+        const i = src.toLowerCase().indexOf(q.toLowerCase());
+        if (i === -1) return [{ text: src, isMatch: false }];
+
+        return [
+        { text: src.slice(0, i), isMatch: false },
+        { text: src.slice(i, i + q.length), isMatch: true },
+        { text: src.slice(i + q.length), isMatch: false },
+        ];
+    }
 
 
 
@@ -171,11 +187,15 @@ const ProductsCard = ({hide, index, id, type, name, image, ingredients, event, s
                     <div className={styles.productsCardImageContainer} style={{
                             backgroundImage: backgroundImg ? `url("${backgroundImg}")` : 'none',
                     }}>
-                        <img src={image} alt='коктейль Маргарита' className={styles.productsImage} />
+                        <img src={image} alt={name} className={styles.productsImage} />
                     </div>
                     <div className={styles.productsCardNameInfoContainer}>
-                        <h3 className={styles.productsCardName}>{name}</h3>
-                        <div style={{marginTop: '1px', marginLeft: '10px'}}>{(isOpenMenuDescription === null || isOpenMenuDescription === 'close') && (<InfoOutlineIcon onClick={openDescription} sx={{cursor: 'pointer'}} />)}</div>
+                        <h3 className={styles.productsCardName}> 
+                            {getHighlightedParts(safeName, safeQuery).map((part, i) => (
+                                <span key={i} style={{ color: part.isMatch || !safeQuery ? 'black' : '#757575' }}>{part.text}</span> 
+                            ))} 
+                        </h3>
+                        <div style={{marginTop: '1px', marginLeft: '10px', width: '24px', height: '24px'}}>{(isOpenMenuDescription === null || isOpenMenuDescription === 'close') && (<InfoOutlineIcon onClick={openDescription} sx={{cursor: 'pointer'}} />)}</div>
                     </div>
                     <p className={styles.productsCardTypeText}>{type}</p>
                     {event?.date ? (<Button onClick={toggleSelect} sx={{ textTransform: 'capitalize', fontSize: '16px', width: '100%', marginTop: '21px', backgroundColor: '#2a7c6e'}} variant="contained" endIcon={!isSelected ? (<LocalBarIcon sx={{ width: 20, height: 20 }} />) : (<DoNotDisturbOnIcon sx={{ width: 20, height: 20 }} />)}>{!isSelected ? 'Выбрать' : 'Отменить'}</Button>) : (<p className={styles.productsCardNotEventText}>Ближайших событий нет</p>)}

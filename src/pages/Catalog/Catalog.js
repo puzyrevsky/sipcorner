@@ -19,6 +19,8 @@ import Skeleton from '@mui/material/Skeleton';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
 
 
 
@@ -63,21 +65,16 @@ const Catalog = ({cocktails, event, selectedProducts, onAddProduct, onRemoveProd
         if(selectedCategory === category) {
             return;
         }
+        handleIsSearching(selectedCategory);
         setCategory(selectedCategory);
-        clickCategory();
-        setCurrentPage(1);
+        // clickCategory();
+        handleCurrentPage(1);
     }
 
 
     // 
-    
-    const sortingCocktails = useMemo(() => {
-        if(category === 'Все') return cocktails;
 
-        return cocktails.filter((i) => (
-            i.type.toLowerCase() === category.toLocaleLowerCase()
-        ));
-    }, [cocktails, category]);
+    
 
 
     // 
@@ -109,7 +106,7 @@ const Catalog = ({cocktails, event, selectedProducts, onAddProduct, onRemoveProd
 
     // 
 
-    const [listFoundItem, setListFoundItem] = useState();
+    const [listFoundItem, setListFoundItem] = useState([]);
 
     const handleFoundItem = (array) => {
         setListFoundItem(array);
@@ -123,33 +120,122 @@ const Catalog = ({cocktails, event, selectedProducts, onAddProduct, onRemoveProd
         setQuantityIntroducedSymbols(boolean);
     }
 
-    const [banAnimationOpenProductCard, setBanAnimationOpenProductCard] = useState(false);
 
-    const handleBanAnimationOpenProductCard = () => {
-        setBanAnimationOpenProductCard(true);
-        const timer = setTimeout(() => {
-            setBanAnimationOpenProductCard(false);
-        }, 800);
+    // 
+
+    const [listSortingJuice, setListSortingJuice] = useState([]);
+
+    const resetSorting = () => {
+        setListSortingJuice((prev) => prev.map((j) => ({...j, selected: false})));
+        setCategory('Все');
+        clickCategory();
+    };
+
+
+    const sortingCocktails = useMemo(() => {
+        // if(category === 'Все') return cocktails;
+
+        // return cocktails.filter((i) => (
+        //     i.type.toLowerCase() === category.toLocaleLowerCase()
+        // ));
+
+        let result = category === 'Все' ? cocktails : cocktails.filter(cocktail => cocktail.type.toLowerCase() === category.toLowerCase());
+
+        const selectedJuices = listSortingJuice
+            .filter((j) => j.selected)
+            .map((j) => j.juice.toLowerCase());
+
+        if(selectedJuices.length > 0) {
+            result = result.filter((cocktail) => cocktail.ingredients.some((ing) => selectedJuices.includes(ing.name.toLowerCase())));
+        }
+
+        return result;
+
+    }, [cocktails, category, listSortingJuice]);
+
+
+
+    const [currentPage, setCurrentPage] = useState(1);
+
+    const itemPerPage = isWide ? 9 : 8;
+
+
+    const currentItems = useMemo(() => {
+        return quantityIntroducedSymbols 
+            ? listFoundItem.slice((currentPage - 1) * itemPerPage, currentPage * itemPerPage)
+            : sortingCocktails.slice((currentPage - 1) * itemPerPage, currentPage * itemPerPage);
+    }, [quantityIntroducedSymbols, listFoundItem, sortingCocktails, currentPage, itemPerPage]);
+
+    // 
+
+
+
+    useEffect(() => {
+        const juices = [];
+
+        cocktails.forEach((cocktail) => {
+            cocktail.ingredients.forEach((ing) => {
+
+                const name = ing.name.toLowerCase();
+
+                if(/(^|\s)сок($|\s)/i.test(name)) {
+                    const juice = ing.name.trim();
+
+                    const exists = juices.some(j => j.juice.toLowerCase() === juice.toLowerCase());
+
+                    if(!exists) {
+                        juices.push({juice, selected: false});
+                    }
+                }
+            });
+        });
+
+        setListSortingJuice(juices);
+    }, [cocktails]);
+
+
+    
+    
+    
+
+    const handleChecked = (e, index) => {
+        // handleSearchText(''); // сброс строки поиска при нажатии на выбор сока
+        handleCurrentPage?.(1);
+
+        handleIsSearching(event);
+        const newList = [...listSortingJuice];
+        newList[index].selected = e.target.checked;
+        setListSortingJuice(newList);
     }
 
 
     // 
 
-    const [currentPage, setCurrentPage] = useState(1);
+    const [quantitySelectedFilters, setQuantitySelectedFilters] = useState(0);
 
-    const itemPerPage = isWide ? 9 : 8;;
+    useEffect(() => {
+        const filterCategoryCount = category !== 'Все' ? 1 : 0;
 
-    const totalPages = Math.ceil(sortingCocktails.length / itemPerPage);
+        const filterJuiceCount = listSortingJuice.reduce((acc, item) => acc + (item.selected ? 1 : 0), 0);
 
-    const currentItems = quantityIntroducedSymbols ? listFoundItem.slice(
-        (currentPage - 1) * itemPerPage,
-        currentPage * itemPerPage
-    )
-    :
-    sortingCocktails.slice(
-        (currentPage - 1) * itemPerPage,
-        currentPage * itemPerPage
-    );
+        setQuantitySelectedFilters(filterCategoryCount+filterJuiceCount);
+    }, [category, listSortingJuice]);
+
+
+    // 
+
+    const handleCurrentPage = (value) => {
+        setCurrentPage(value);
+    }
+
+
+    // 
+    
+    
+
+    const totalPages = Math.ceil((quantityIntroducedSymbols ? listFoundItem.length : sortingCocktails.length) / itemPerPage);
+
+    
 
 
     const arrayElementsSkeleton = [...Array(itemPerPage).keys()];
@@ -213,6 +299,29 @@ const Catalog = ({cocktails, event, selectedProducts, onAddProduct, onRemoveProd
         };
     }, []);
 
+    
+    // 
+
+    const [searchText, setSearchText] = useState('');
+
+    const handleSearchText = (value) => {
+        setSearchText(value);
+    }
+
+
+    useEffect(() => { 
+        handleCurrentPage(1); 
+    }, [quantityIntroducedSymbols, category]);
+
+    // 
+
+    const [isSearching, setIsSearching] = useState(false);
+
+    const handleIsSearching = (value) => {
+        setIsSearching(value);
+    }
+
+
 
 
     return (
@@ -228,7 +337,9 @@ const Catalog = ({cocktails, event, selectedProducts, onAddProduct, onRemoveProd
                                     className={styles.productsCategoryContainer}
                                     style={{ borderRadius: isExpandCategory ? '13px 13px 0 0' : '13px' }}
                                 >
-                                    <p>{category}</p>
+                                    {/* <p>{category}</p> */}
+                                    <p>Сортировка</p>
+                                    {quantitySelectedFilters !== 0 && (<span className={styles.productsQuantitySelectedCategory}>{quantitySelectedFilters}</span>)}
                                     <div className={
                                         hasClicked
                                             ? (isExpandCategory
@@ -241,24 +352,49 @@ const Catalog = ({cocktails, event, selectedProducts, onAddProduct, onRemoveProd
                                 </div>
                                 {isExpandCategory && 
                                     <div className={styles.productsCategoryListContainer}>
-                                        <ul className={styles.productsCategoryList}>
-                                            {categoriesList.map((item, index) => (
-                                            <li
-                                                key={index}
-                                                onClick={() => clickSelectCategory(item)}
-                                                className={`${item !== category
-                                                ? styles.productsCategoryItem
-                                                : styles.productsCategoryItem__selected}`}
-                                            >
-                                                {item} {item === category && <CheckIcon sx={{ fontSize: '20px' }} />}
-                                            </li>
-                                            ))}
-                                        </ul>
+                                        <div style={{position: 'relative',}}>
+                                            <p className={styles.productsCategoryTypeText}>Тип:</p>
+                                            <ul className={styles.productsCategoryList}>
+                                                {categoriesList.map((item, index) => (
+                                                    <li
+                                                        key={index}
+                                                        onClick={() => clickSelectCategory(item)}
+                                                        className={`${item !== category
+                                                        ? styles.productsCategoryItem
+                                                        : styles.productsCategoryItem__selected}`}
+                                                    >
+                                                        {item} {item === category && <CheckIcon sx={{ fontSize: '20px' }} />}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                            <p className={styles.productsCategoryTypeText}>Сок:</p>
+                                            <ul className={styles.productsCategoryList}>
+                                                {listSortingJuice.map((item, index) => (
+                                                    <li key={index} className={`${!item.selected ? styles.productsCategoryItem : styles.productsCategoryItem__selected}`}>
+                                                        <label style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', cursor: item.selected ? 'default' : 'pointer'}}>
+                                                            <p className={`${!item.selected ? styles.productsCategoryNameText : styles.productsCategoryNameText__selected}`}>{item.juice}</p>
+                                                            <Checkbox
+                                                                checked={item.selected}
+                                                                onChange={(e) => handleChecked(e, index)}
+                                                                sx={{
+                                                                    color: '#8ac640',               // цвет когда не выбран
+                                                                    '&.Mui-checked': { color: '#8ac640' }, // цвет когда выбран
+                                                                }}
+                                                                size="small"
+                                                            />
+                                                        </label>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                            <div className={styles.productsCategoryResetSortingButton} onClick={() => resetSorting()}>
+                                                <p>Сбросить</p>
+                                            </div>
+                                        </div>
                                     </div>
                                 }
                             </div>
                         </div>
-                        <SearchFilter sortingCocktails={sortingCocktails} handleFoundItem={handleFoundItem} handleQuantityIntroducedSymbols={handleQuantityIntroducedSymbols} handleBanAnimationOpenProductCard={handleBanAnimationOpenProductCard} />
+                        <SearchFilter listFoundItem={listFoundItem} searchText={searchText} handleSearchText={handleSearchText} sortingCocktails={sortingCocktails} handleFoundItem={handleFoundItem} handleQuantityIntroducedSymbols={handleQuantityIntroducedSymbols} handleIsSearching={handleIsSearching} onHandleCurrentPage={handleCurrentPage} category={category} />
                         <div className={styles.products}>
                             { !event ? 
                             //!mounted || loading ?
@@ -284,9 +420,9 @@ const Catalog = ({cocktails, event, selectedProducts, onAddProduct, onRemoveProd
                                         <p>Список пуст</p>
                                     </div>)
                                     :                            
-                                    (<div className={`${styles.productsContent} ${mountedOnce && !banAnimationOpenProductCard ? styles.fadeIn : ''}`}>
+                                    (<div className={`${styles.productsContent} ${!isSearching && mountedOnce ? styles.fadeIn : ''}`}>
                                         {currentItems.map((cocktail, index) => (
-                                            <ProductsCard hide={false} index={index} key={`${cocktail.id}-${category}`} id={cocktail.id} name={cocktail.name} image={cocktail.imageUrl} ingredients={cocktail.ingredients} type={cocktail.type} event={event} selectedProducts={selectedProducts} onAddProduct={onAddProduct} onRemoveProduct={onRemoveProduct} />
+                                            <ProductsCard hide={false} searchText={searchText ?? ''} index={index} key={`${cocktail.id}-${category}`} id={cocktail.id} name={cocktail.name} image={cocktail.imageUrl} ingredients={cocktail.ingredients} type={cocktail.type} event={event} selectedProducts={selectedProducts} onAddProduct={onAddProduct} onRemoveProduct={onRemoveProduct} />
                                         ))}
                                     </div>)
                                 }
@@ -299,7 +435,7 @@ const Catalog = ({cocktails, event, selectedProducts, onAddProduct, onRemoveProd
                                     count={totalPages}
                                     page={currentPage}
                                     onChange={(e, value) => {
-                                        setCurrentPage(value);
+                                        handleCurrentPage(value);
                                         window.scrollTo({ top: 0 }); // behavior: 'smooth' 
                                     }}
                                     siblingCount={1}

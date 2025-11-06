@@ -1,0 +1,21 @@
+.searchFilter {
+    padding: 0;
+    margin-bottom: 13px;
+}
+
+.searchFilterResultTextContainer {
+    height: 21px;
+    margin-left: 5px;
+}
+
+.searchFilterResultText {
+    margin: 0;
+    font-size: 14px;
+    color: rgb(117, 117, 117);
+}
+
+@media (max-width: 992px) {
+    .searchFilter {
+        padding: 0 13px;
+    }
+}
