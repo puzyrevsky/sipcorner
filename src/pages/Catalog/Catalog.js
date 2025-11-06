@@ -21,6 +21,8 @@ import Stack from '@mui/material/Stack';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 
 
 
@@ -154,10 +156,33 @@ const Catalog = ({cocktails, event, selectedProducts, onAddProduct, onRemoveProd
     }, [cocktails, category, listSortingJuice]);
 
 
+    // 
+
+    const showQuantityCardsOnPage = [{desctop: 9, mobile: 8}, {desctop: 15, mobile: 14}, {desctop: 27, mobile: 26}];
+
+    const [selectedQuantityShowCardOnPage, setSelectedQuantityShowCardOnPage] = useState(1);
+
+    const changeSelectedQuantityShowCardOnPage = () => {
+        
+        const quantityOptions = showQuantityCardsOnPage.length;
+        let newValue;
+
+        if(selectedQuantityShowCardOnPage >= quantityOptions-1) {
+            newValue = 0
+        } else {
+            newValue = selectedQuantityShowCardOnPage + 1;
+        }
+
+        handleCurrentPage(1);
+        setSelectedQuantityShowCardOnPage(newValue);        
+    }
+
+    //
 
     const [currentPage, setCurrentPage] = useState(1);
 
-    const itemPerPage = isWide ? 9 : 8;
+    // const itemPerPage = isWide ? 9 : 8;
+    const itemPerPage = isWide ? showQuantityCardsOnPage[selectedQuantityShowCardOnPage].desctop : showQuantityCardsOnPage[selectedQuantityShowCardOnPage].mobile;
 
 
     const currentItems = useMemo(() => {
@@ -166,9 +191,8 @@ const Catalog = ({cocktails, event, selectedProducts, onAddProduct, onRemoveProd
             : sortingCocktails.slice((currentPage - 1) * itemPerPage, currentPage * itemPerPage);
     }, [quantityIntroducedSymbols, listFoundItem, sortingCocktails, currentPage, itemPerPage]);
 
-    // 
 
-
+    //
 
     useEffect(() => {
         const juices = [];
@@ -322,6 +346,11 @@ const Catalog = ({cocktails, event, selectedProducts, onAddProduct, onRemoveProd
     }
 
 
+    // 
+
+    const [isShowListSortingType, setIsShowListSortingType] = useState(false);
+    const [isShowListSortingJuices, setIsShowListSortingJuices] = useState(false);
+
 
 
     return (
@@ -353,22 +382,31 @@ const Catalog = ({cocktails, event, selectedProducts, onAddProduct, onRemoveProd
                                 {isExpandCategory && 
                                     <div className={styles.productsCategoryListContainer}>
                                         <div style={{position: 'relative',}}>
-                                            <p className={styles.productsCategoryTypeText}>Тип:</p>
-                                            <ul className={styles.productsCategoryList}>
-                                                {categoriesList.map((item, index) => (
-                                                    <li
-                                                        key={index}
-                                                        onClick={() => clickSelectCategory(item)}
-                                                        className={`${item !== category
-                                                        ? styles.productsCategoryItem
-                                                        : styles.productsCategoryItem__selected}`}
-                                                    >
-                                                        {item} {item === category && <CheckIcon sx={{ fontSize: '20px' }} />}
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                            <p className={styles.productsCategoryTypeText}>Сок:</p>
-                                            <ul className={styles.productsCategoryList}>
+                                            <div onClick={() => setIsShowListSortingType((prev) => !prev)} className={styles.productsCategoryViewContainer}>
+                                                <p className={styles.productsCategoryTypeText}>Тип</p>
+                                                {!isShowListSortingType ? <ArrowDropDownIcon /> : <ArrowDropUpIcon />}
+                                            </div>
+                                            {isShowListSortingType && 
+                                                (<ul className={styles.productsCategoryList}>
+                                                    {categoriesList.map((item, index) => (
+                                                        <li
+                                                            key={index}
+                                                            onClick={() => clickSelectCategory(item)}
+                                                            className={`${item !== category
+                                                            ? styles.productsCategoryItem
+                                                            : styles.productsCategoryItem__selected}`}
+                                                        >
+                                                            {item} {item === category && <CheckIcon sx={{ fontSize: '20px' }} />}
+                                                        </li>
+                                                    ))}
+                                                </ul>)
+                                            }
+                                            <div onClick={() => setIsShowListSortingJuices((prev) => !prev)} className={styles.productsCategoryViewContainer}>
+                                                <p className={styles.productsCategoryTypeText}>Сок</p>
+                                                {!isShowListSortingJuices ? <ArrowDropDownIcon /> : <ArrowDropUpIcon />}
+                                            </div>
+                                            {isShowListSortingJuices && 
+                                            (<ul className={styles.productsCategoryList}>
                                                 {listSortingJuice.map((item, index) => (
                                                     <li key={index} className={`${!item.selected ? styles.productsCategoryItem : styles.productsCategoryItem__selected}`}>
                                                         <label style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', cursor: item.selected ? 'default' : 'pointer'}}>
@@ -385,16 +423,17 @@ const Catalog = ({cocktails, event, selectedProducts, onAddProduct, onRemoveProd
                                                         </label>
                                                     </li>
                                                 ))}
-                                            </ul>
-                                            <div className={styles.productsCategoryResetSortingButton} onClick={() => resetSorting()}>
-                                                <p>Сбросить</p>
+                                            </ul>)
+                                            }
+                                            <div className={`${quantitySelectedFilters !== 0 ? styles.productsCategoryResetSortingButton : styles.productsCategoryResetSortingButton__disabled}`} onClick={() => resetSorting()}>
+                                                <p className={`${quantitySelectedFilters !== 0 ? styles.productsCategoryResetSortingText__active : styles.productsCategoryResetSortingText__disabled}`}>Сбросить</p>
                                             </div>
                                         </div>
                                     </div>
                                 }
                             </div>
                         </div>
-                        <SearchFilter listFoundItem={listFoundItem} searchText={searchText} handleSearchText={handleSearchText} sortingCocktails={sortingCocktails} handleFoundItem={handleFoundItem} handleQuantityIntroducedSymbols={handleQuantityIntroducedSymbols} handleIsSearching={handleIsSearching} onHandleCurrentPage={handleCurrentPage} category={category} />
+                        <SearchFilter listFoundItem={listFoundItem} searchText={searchText} handleSearchText={handleSearchText} sortingCocktails={sortingCocktails} handleFoundItem={handleFoundItem} handleQuantityIntroducedSymbols={handleQuantityIntroducedSymbols} handleIsSearching={handleIsSearching} onHandleCurrentPage={handleCurrentPage} quantitySelectedFilters={quantitySelectedFilters} onChangeSelectedQuantityShowCardOnPage={changeSelectedQuantityShowCardOnPage} itemPerPage={itemPerPage} />
                         <div className={styles.products}>
                             { !event ? 
                             //!mounted || loading ?

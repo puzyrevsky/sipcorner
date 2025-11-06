@@ -8,7 +8,21 @@ import InputAdornment from '@mui/material/InputAdornment';
 import CloseIcon from '@mui/icons-material/Close';
 
 
-const SearchFilter = ({listFoundItem, searchText, handleSearchText, sortingCocktails, handleFoundItem, handleQuantityIntroducedSymbols, handleIsSearching, onHandleCurrentPage, category}) => {
+const SearchFilter = (
+    {
+        listFoundItem, 
+        searchText,
+        handleSearchText,
+        sortingCocktails, 
+        handleFoundItem, 
+        handleQuantityIntroducedSymbols, 
+        handleIsSearching, 
+        onHandleCurrentPage, 
+        quantitySelectedFilters, 
+        onChangeSelectedQuantityShowCardOnPage,
+        itemPerPage
+    }
+) => {
 
     const handleChangeInput = (e) => {
         const value = e.target.value || ''; // если undefined, то пустая строка
@@ -39,6 +53,14 @@ const SearchFilter = ({listFoundItem, searchText, handleSearchText, sortingCockt
         handleIsSearching(false);
         onHandleCurrentPage?.(1); // сброс страницы
     };
+
+
+    // 
+
+    const hasSearchText = searchText.length > 0;
+    const hasSelectedFilters = quantitySelectedFilters > 0;
+
+    const shouldShowResultText = hasSearchText || hasSelectedFilters;
 
     
 
@@ -100,7 +122,8 @@ const SearchFilter = ({listFoundItem, searchText, handleSearchText, sortingCockt
                 </div>                                      
             </Box>
             <div className={styles.searchFilterResultTextContainer}>
-                {searchText.length > 0 || category !== 'Все' && <p className={styles.searchFilterResultText}>Найдено: {listFoundItem.length}</p>}
+                {shouldShowResultText && <p className={styles.searchFilterResultText}>Найдено: {listFoundItem.length}</p>}
+                <span className={`${styles.searchFilterResultText} ${styles.searchTextShowQuantityCards}`} onClick={onChangeSelectedQuantityShowCardOnPage}>Показать по: {itemPerPage}</span>
             </div>   
         </div>
     )

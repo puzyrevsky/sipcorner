@@ -6,12 +6,26 @@
 .searchFilterResultTextContainer {
     height: 21px;
     margin-left: 5px;
+    margin-right: 5px;
+    display: flex;
+    justify-content: space-between;
+    position: relative;
 }
 
 .searchFilterResultText {
     margin: 0;
     font-size: 14px;
     color: rgb(117, 117, 117);
+}
+
+.searchTextShowQuantityCards {
+    text-align: end;
+    text-decoration-line: underline;
+    position: absolute;
+    right: 0;
+    top: 0;
+    user-select: none;
+    cursor: pointer;
 }
 
 @media (max-width: 992px) {

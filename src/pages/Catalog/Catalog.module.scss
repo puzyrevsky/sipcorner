@@ -174,7 +174,7 @@
         user-select: none;
         cursor: pointer;
         
-        p {
+        .productsCategoryResetSortingText__active {
             // background-color: rgb(189 189 189);
             color: #ff4545;
             margin: 0;
@@ -186,12 +186,33 @@
     .productsCategoryResetSortingButton:hover {
         transition: .25s;
         background-color: #c1c1c1;
+    }
 
-        p {
-            // color: #bd0707;
+    .productsCategoryResetSortingButton__disabled {
+        position: sticky;
+        z-index: 4000;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        border-top: 2px solid #c1c1c1;
+        background-color: #e1e1e1;
+        user-select: none;
+
+        .productsCategoryResetSortingText__disabled {
+            // background-color: rgb(189 189 189);
+            color: #57575767;
+            margin: 0;
+            padding: 10px;
+            text-align: center;
         }
     }
 
+    .productsCategoryResetSortingButton__disabled:hover {
+        background-color: #e1e1e1;
+    }
+
+
+    // 
 
     .productsCategoryItem {
         margin: 0;
@@ -235,12 +256,20 @@
     }
 }
 
+.productsCategoryViewContainer {
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    cursor: pointer;
+    padding: 5px 0 5px 18px;
+    background-color: rgb(255 255 255 / 45%);
+}
+
 .productsCategoryTypeText {
     user-select: none;
     font-weight: 500;
     margin: 0;
-    padding: 5px 0 5px 18px;
-    background-color: rgb(255 255 255 / 45%);
+    
 }
 
 // 
