@@ -461,7 +461,7 @@ const Catalog = ({cocktails, event, selectedProducts, onAddProduct, onRemoveProd
                                     :                            
                                     (<div className={`${styles.productsContent} ${!isSearching && mountedOnce ? styles.fadeIn : ''}`}>
                                         {currentItems.map((cocktail, index) => (
-                                            <ProductsCard hide={false} searchText={searchText ?? ''} index={index} key={`${cocktail.id}-${category}`} id={cocktail.id} name={cocktail.name} image={cocktail.imageUrl} ingredients={cocktail.ingredients} type={cocktail.type} event={event} selectedProducts={selectedProducts} onAddProduct={onAddProduct} onRemoveProduct={onRemoveProduct} />
+                                            <ProductsCard hide={false} searchText={searchText ?? ''} index={index} key={`${cocktail.id}-${category}`} id={cocktail.id} name={cocktail.name} image={cocktail.imageUrl} ingredients={cocktail.ingredients} type={cocktail.type} event={event} selectedProducts={selectedProducts} onAddProduct={onAddProduct} onRemoveProduct={onRemoveProduct} isAuthor={cocktail.isAuthor} />
                                         ))}
                                     </div>)
                                 }

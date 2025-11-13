@@ -30,7 +30,7 @@ const FIVE_MIN = 5 * 60 * 1000;
 function App() {
 
 const [cocktails, setCocktails] = useState([]);
-
+console.log('cocktails:', cocktails);
 useEffect(() => {
         const fetchCocktails = async () => {
             try {

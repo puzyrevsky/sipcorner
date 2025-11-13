@@ -227,7 +227,7 @@ const Products = ({id, cocktails, event, sectionRef, selectedProducts, onAddProd
                                     : 
                                     (<div className={`${styles.productsContent} ${mountedOnce ? styles.fadeIn : ''}`}>
                                         {sortingCocktails.map((cocktail, index) => (
-                                            <ProductsCard hide={true} index={index} key={`${cocktail.id}-${category}`} id={cocktail.id} name={cocktail.name} image={cocktail.imageUrl} ingredients={cocktail.ingredients} type={cocktail.type} event={event} selectedProducts={selectedProducts} onAddProduct={onAddProduct} onRemoveProduct={onRemoveProduct} />
+                                            <ProductsCard hide={true} index={index} key={`${cocktail.id}-${category}`} id={cocktail.id} name={cocktail.name} image={cocktail.imageUrl} ingredients={cocktail.ingredients} type={cocktail.type} event={event} selectedProducts={selectedProducts} onAddProduct={onAddProduct} onRemoveProduct={onRemoveProduct} isAuthor={cocktail.isAuthor} />
                                         ))}
                                     </div>)
                                 }

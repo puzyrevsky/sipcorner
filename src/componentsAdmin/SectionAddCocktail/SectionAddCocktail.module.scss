@@ -69,6 +69,8 @@
 
 .sectionAddCocktailCategoriesContainer {
     margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
 }
 
 .sectionAddCocktailCategoriesText {
@@ -197,7 +199,9 @@
     width: 122px;
     border-radius: 0 0 13px 13px;
     padding: 0px;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-height: 210px;
 
     .productsCategoryList {
         margin: 0;

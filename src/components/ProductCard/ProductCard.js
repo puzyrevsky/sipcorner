@@ -19,7 +19,7 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 
 
 
-const ProductsCard = ({hide, index, id, type, name, image, ingredients, event, selectedProducts, onAddProduct, onRemoveProduct, searchText}) => {
+const ProductsCard = ({hide, index, id, type, name, image, ingredients, event, selectedProducts, onAddProduct, onRemoveProduct, searchText, isAuthor}) => {
 
     const [listIngredients, setListIngredients] = useState([]);
 
@@ -166,7 +166,7 @@ const ProductsCard = ({hide, index, id, type, name, image, ingredients, event, s
 
     return (
         <div className={styles.productsCardBorder} style={{border: borderColor, display: isHidden ? "none" : ""}}>
-                <div className={styles.productsCard}>
+                <div className={styles.productsCard} style={{backgroundColor: !isAuthor ? 'white' : 'rgba(234, 224, 200, 0.2)'}}>
                     <div className={`${styles.productsCardInfoContentContainer} 
                         ${isOpenMenuDescription === 'open' ? styles.productsCardInfoContentContainer__animationOpen : ''} 
                         ${isOpenMenuDescription === 'close' ? styles.productsCardInfoContentContainer__animationClose : ''}`}
@@ -203,5 +203,5 @@ const ProductsCard = ({hide, index, id, type, name, image, ingredients, event, s
         </div>
     )
 }
-
+// Жемчужный: rgba(234, 224, 200, 0.2);
 export default ProductsCard;

@@ -19,11 +19,14 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import CheckIcon from '@mui/icons-material/Check';
+import { useTheme } from '@mui/material/styles';
 
 import { addDoc, collection, doc, setDoc, getDocs, deleteDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../../firebase'; // путь может отличаться
 
 import stubImageCocktail from '../../image/stub-image-cocktail.png';
+import stubImageCocktailAuthor from '../../image/stub-image-cocktail-author.png';
+
 import stubMiniatureCocktail from '../../image/stub-miniature-cocktail.png';
 
 const SectionAddCocktail = () => {
@@ -70,7 +73,7 @@ const [showSection, setShowSection] = useState(false);
 
     // 
 
-    const measurementList = ['мл.', 'шт.', 'гр.', 'унц.', 'шот', 'бар. лож.', 'ч. л.', 'ст. л.', 'дэш', 'капл.', 'top', 'щепот.', 'слой', 'лист.', 'половин.'];
+    const measurementList = ['мл.', 'шт.', 'гр.', 'унц.', 'шот', 'бар. лож.', 'ч. л.', 'ст. л.', 'дэш', 'капл.', 'top', 'щепот.', 'слой', 'лист.', 'половин.', 'каёмка',];
 
     const [measurement, setMeasurement] = useState('мл.');
 
@@ -112,7 +115,7 @@ const [showSection, setShowSection] = useState(false);
 
     // 
 
-    const isAddDisabled = (measurement === 'top' || measurement === 'слой')
+    const isAddDisabled = (measurement === 'top' || measurement === 'слой' || measurement ===  'каёмка')
         ? !nameIngredientTextInput.trim()    // только название обязательно
         : (!nameIngredientTextInput.trim() || !quantityIngredient.trim()); // название + количество
 
@@ -221,6 +224,17 @@ const handleHaveImage = (event) => {
     setHaveImage(event.target.checked);
 }
 
+const theme = useTheme();
+
+
+// handle checked author's recipe
+
+const [isAuthor, setIsAuthor] = useState(false);
+
+const handleIsAuthor = (event) => {
+    setIsAuthor(event.target.checked);
+}
+
 
 // loading image cloudinary
 
@@ -238,7 +252,7 @@ const handleHaveImage = (event) => {
     fileImageInputRef.current?.click();
   }
 
-const handleClickAddingMiniature = () => {
+  const handleClickAddingMiniature = () => {
     setPreviewMiniatureUrl('');
     if (fileMiniatureInputRef.current) fileMiniatureInputRef.current.value = '';
     fileMiniatureInputRef.current?.click();
@@ -302,9 +316,10 @@ const addCocktail = async () => {
         })), // массив ингредиентов
         type: alignment,                       // категория: Алкогольный/Безалкогольный/Шот
         haveImage: haveImage,
-        imageUrl: haveImage ? previewImageUrl : stubImageCocktail,          // ссылка на фото (может быть null)
-        miniatureUrl: haveImage ? previewMiniatureUrl : stubMiniatureCocktail, 
-        createdAt: serverTimestamp(),          // серверное время
+        imageUrl: haveImage ? previewImageUrl : (!isAuthor ? stubImageCocktail : stubImageCocktailAuthor),          // ссылка на фото (может быть null)
+        miniatureUrl: haveImage ? previewMiniatureUrl : stubMiniatureCocktail,
+        isAuthor: isAuthor, // авторский или по рецепту
+        createdAt: serverTimestamp(), // серверное время
     };
 
     try {
@@ -317,6 +332,7 @@ const addCocktail = async () => {
         setPreviewImageUrl('');
         setPreviewMiniatureUrl('');
         setHaveImage(true);
+        setIsAuthor(false);
         setAlignment('Алкогольный');
         alert('Коктейль сохранён!');
 
@@ -417,25 +433,54 @@ const isSaveDisabled =
                             <Button variant="contained" disabled={isAddDisabled} onClick={handleButtonAddIngredient} sx={{width: '100%', height: '34px', borderRadius: '8px', marginTop: '17px'}} color="primary" aria-label="add">Добавить</Button>
                         </div>
                         <div className={styles.sectionAddCocktailCategoriesContainer}>
-                            <p className={styles.sectionAddCocktailCategoriesText}>{alignment}</p>
-                            <ToggleButtonGroup
-                                value={alignment}
-                                exclusive
-                                onChange={handleAlignment}
-                                aria-label="text alignment"
-                                size="small"
-                                sx={{marginTop: '10px'}}
-                            >
-                                <ToggleButton value="Алкогольный" aria-label="left aligned">
-                                    <LocalBarIcon />
-                                </ToggleButton>
-                                <ToggleButton value="Безалкогольный" aria-label="centered">
-                                    <NoDrinksIcon />
-                                </ToggleButton>
-                                <ToggleButton value="Шот" aria-label="right aligned">
-                                    <WineBarIcon />
-                                </ToggleButton>
-                            </ToggleButtonGroup>
+                            <div>
+                                <p className={styles.sectionAddCocktailCategoriesText}>{alignment}</p>
+                                <ToggleButtonGroup
+                                    value={alignment}
+                                    exclusive
+                                    onChange={handleAlignment}
+                                    aria-label="text alignment"
+                                    size="small"
+                                    sx={{marginTop: '10px'}}
+                                >
+                                    <ToggleButton value="Алкогольный" aria-label="left aligned">
+                                        <LocalBarIcon />
+                                    </ToggleButton>
+                                    <ToggleButton value="Безалкогольный" aria-label="centered">
+                                        <NoDrinksIcon />
+                                    </ToggleButton>
+                                    <ToggleButton value="Шот" aria-label="right aligned">
+                                        <WineBarIcon />
+                                    </ToggleButton>
+                                </ToggleButtonGroup>
+                            </div>
+                            <div>
+                                <FormControlLabel
+                                    sx={{flexDirection: 'column-reverse'}}
+                                    control={
+                                        <Switch
+                                            checked={isAuthor}
+                                            onChange={handleIsAuthor}
+                                            slotProps={{ input: { 'aria-label': 'controlled' } }}
+                                            sx={{
+                                                '& .MuiSwitch-switchBase': {
+                                                color: theme.palette.primary.main, // ползунок выключен - синий
+                                                '&.Mui-checked': {
+                                                    color: theme.palette.primary.main, // ползунок включен - синий
+                                                },
+                                                '&.Mui-checked + .MuiSwitch-track': {
+                                                    backgroundColor: theme.palette.primary.main, // дорожка включена - синий
+                                                },
+                                                },
+                                                '& .MuiSwitch-track': {
+                                                backgroundColor: theme.palette.primary.main, // дорожка выключена - тоже синий
+                                                },
+                                            }}
+                                        />
+                                    }
+                                    label={!isAuthor ? 'По рецепту' : 'Авторский'}
+                                />
+                            </div>
                         </div>
                         <div className={styles.sectionAddCocktailAddImageContainer}>
                             <div>
